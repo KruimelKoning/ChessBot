@@ -1,0 +1,6 @@
+*.o
+*.a
+chessbot
+.vscode
+.cache/
+compile_commands.json

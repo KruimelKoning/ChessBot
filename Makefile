@@ -1,24 +1,52 @@
+GREEN =\033[0;32m
+RED = \033[0;31m
+NO_COLOUR =\033[0m
+
 NAME	:= chessbot
 CC		:= clang++
 CFLAGS	:= -Wall -Wextra -pedantic -std=c++20
+MAKEFLAGS += --no-print-directory
 # CFLAGS := -Wall -Wextra -pedantic -std=c89 -O3 -flto -march=native
+INC_DIRS := include
+MAIN_SRCDIR := src
+MAIN_OBJDIR := build
 
-HEADERS := include/uci.hpp include/perft.hpp include/search.hpp include/evaluate.hpp include/generate.hpp include/move.hpp include/position.hpp include/parse.hpp include/types.hpp
 
-build/%.o: src/%.cpp $(HEADERS) Makefile
-	mkdir -p $(@D)
-	$(CC) $(CFLAGS) $< -o $@ -c -Iinclude
+MODULES := main evaluate
+SRCDIR := $(addprefix $(MAIN_SRCDIR)/, $(MODULES))
+OBJDIR := $(addprefix $(MAIN_OBJDIR)/, $(MODULES))
 
-$(NAME): build/uci.o build/perft.o build/search.o build/evaluate.o build/generate.o build/move.o build/position.o build/parse.o build/main.o
-	$(CC) $(CFLAGS) $^ -o $@
+SRC_MAIN := $(addprefix main/, generate.cpp main.cpp move.cpp parse.cpp perft.cpp \
+position.cpp search.cpp uci.cpp)
+SRC_EVAL := $(addprefix evaluate/, evaluate.cpp)
+
+SRC := $(addprefix $(MAIN_SRCDIR)/, $(SRC_MAIN) $(SRC_EVAL))
+OBJ := $(patsubst $(MAIN_SRCDIR)/%.cpp,$(MAIN_OBJDIR)/%.o, $(SRC))
+HEADERS = $(foreach dir, $(INC_DIRS), -I$(dir)) $(addprefix -I,$(SRCDIR))
+
+.PHONY: all clean flcean re
+
+all: $(NAME)
+
+$(MAIN_OBJDIR):
+	@mkdir -p $(MAIN_OBJDIR)
+
+$(OBJDIR): | $(MAIN_OBJDIR)
+	@mkdir -p $(OBJDIR)
+
+$(OBJ) : $(MAIN_OBJDIR)/%.o: $(MAIN_SRCDIR)/%.cpp | $(OBJDIR)
+	@$(CC) $(CFLAGS) $(HEADERS) -c $< -o $@
+
+$(NAME): $(OBJ)
+	@$(CC) $(OBJ) -o $(NAME)
+	@echo "${GREEN}built ${NAME}... ${NO_COLOUR}"
 
 clean:
-	rm -rf build/
+	@echo "${RED}cleaning ${NAME} build files...${NO_COLOUR}"
+	@rm -rf build/
 
-fclean:
-	rm -rf build/
-	rm -f $(NAME)
+fclean: clean
+	@echo "${RED}removing ${NAME}...${NO_COLOUR}"
+	@rm -f $(NAME)
 
-re:
-	${MAKE} fclean
-	${MAKE}
+re: fclean all
