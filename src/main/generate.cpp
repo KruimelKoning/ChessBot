@@ -20,12 +20,12 @@ static size_t generate_pawn_move(const Position *pos, std::vector<Move>& moves, 
 	size_t count = 0;
 
 	if (RANK(to_square) == RELATIVE(RANK_8, pos->side_to_move)) {
-		moves.push_back(make_move(from_square, to_square, KNIGHT));
-		moves.push_back(make_move(from_square, to_square, BISHOP));
-		moves.push_back(make_move(from_square, to_square, ROOK));
-		moves.push_back(make_move(from_square, to_square, QUEEN));
+		moves.push_back({ from_square, to_square, ROOK   });
+		moves.push_back({ from_square, to_square, QUEEN  });
+		moves.push_back({ from_square, to_square, BISHOP });
+		moves.push_back({ from_square, to_square, KNIGHT });
 	} else {
-		moves.push_back(make_move(from_square, to_square, NO_TYPE));
+		moves.push_back({ from_square, to_square, NO_TYPE });
 	}
 
 	return count;
@@ -61,7 +61,7 @@ static size_t generate_simple_move(const Position *pos, std::vector<Move>& moves
 		int piece = pos->board[to_square];
 
 		if (piece == NO_PIECE || COLOR(piece) != pos->side_to_move) {
-			moves.push_back(make_move(from_square, to_square, NO_TYPE));
+			moves.push_back({ from_square, to_square, NO_TYPE });
 		}
 	}
 
@@ -79,7 +79,7 @@ static size_t generate_sliding_move(const Position *pos, std::vector<Move>& move
 		int piece = pos->board[to_square];
 
 		if (piece == NO_PIECE || COLOR(piece) != pos->side_to_move) {
-			moves.push_back(make_move(from_square, to_square, NO_TYPE));
+			moves.push_back({ from_square, to_square, NO_TYPE });
 		}
 
 		if (piece != NO_PIECE) {
@@ -181,7 +181,7 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 				int g1_empty = pos->board[g1] == NO_PIECE;
 
 				if (f1_empty && g1_empty) {
-					moves.push_back(make_move(square, g1, NO_TYPE));
+					moves.push_back({ square, g1, NO_TYPE });
 				}
 			}
 
@@ -195,7 +195,7 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 				int d1_empty = pos->board[d1] == NO_PIECE;
 
 				if (b1_empty && c1_empty && d1_empty) {
-					moves.push_back(make_move(square, c1, NO_TYPE));
+					moves.push_back({ square, c1, NO_TYPE });
 				}
 			}
 
