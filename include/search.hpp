@@ -6,7 +6,7 @@
 #include "move.hpp"
 
 /* information passed to the search function.                                */
-struct search_info {
+struct SearchInfo {
 	/* a pointer to the position.                                            */
 	const Position *pos;
 
@@ -18,7 +18,7 @@ struct search_info {
 };
 
 /* the return type of `minimax`                                              */
-struct search_result {
+struct SearchResult {
 	/* the best move found for the position passed to `minimax`.             */
 	Move move;
 
@@ -108,7 +108,7 @@ struct search_result {
 /* https://www.chessprogramming.org/Move_Ordering                            */
 /* https://www.chessprogramming.org/Transposition_Table                      */
 /* https://www.chessprogramming.org/Quiescence_Search                        */
-struct search_result minimax(const Position *pos, int depth);
+SearchResult minimax(const Position& pos, int depth, int alpha = 0, int beta = 0);
 
 /* the search function sets up the search parameters and calls `minimax` to  */
 /* starts searching. our basic implementation always starts a search at a    */
@@ -143,4 +143,4 @@ struct search_result minimax(const Position *pos, int depth);
 /* https://www.chessprogramming.org/Time_Management                          */
 /* https://www.chessprogramming.org/Iterative_Deepening                      */
 /* https://www.chessprogramming.org/Opening_Book                             */
-Move search(const struct search_info *info);
+Move search(const SearchInfo *info);

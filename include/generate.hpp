@@ -6,6 +6,7 @@
 #include <stddef.h>
 
 #include <vector>
+#include <algorithm>
 
 /* maximum number of moves in any chess position. the actual maximum number  */
 /* of moves seems to be 218, but just to be safe we round up to the nearest  */

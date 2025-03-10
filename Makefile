@@ -4,7 +4,7 @@ NO_COLOUR =\033[0m
 
 NAME	:= chessbot
 CC		:= clang++
-CFLAGS	:= -Wall -Wextra -pedantic -std=c++20
+CFLAGS	:= -Wall -Wextra -pedantic -std=c++20 -g
 MAKEFLAGS += --no-print-directory
 # CFLAGS := -Wall -Wextra -pedantic -std=c89 -O3 -flto -march=native
 INC_DIRS := include

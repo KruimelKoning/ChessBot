@@ -3,46 +3,49 @@
 #include "generate.hpp"
 
 #include <limits.h>
+#include <iostream>
 
-struct search_result minimax(const Position *pos, int depth) {
-	struct search_result result;
+SearchResult minimax(const Position& pos, int depth, int alpha, int beta) {
+	SearchResult result = { .score  = -1000000 };
 
-	result.score = -1000000;
-
-	if (depth == 0) {
+	if (depth == 0)
+	{
 		/* we have reached our search depth, so evaluate the position.       */
-		result.score = evaluate(pos);
-	} else {
-		std::vector<Move>	moves;
+		result.score = evaluate(&pos);
+		return result;
+	}
+	std::vector<Move>	moves;
 
-		moves.reserve(MAX_MOVES);
-		//move moves[MAX_MOVES];
-		size_t count = generate_legal_moves(pos, moves);
-		size_t index;
+	moves.reserve(MAX_MOVES);
+	generate_legal_moves(&pos, moves); // should change to void
 
-		for (index = 0; index < count; index++) {
-			Position copy = *pos;
-			int score;
-
-			/* do a move, the current player in `copy` is then the opponent, */
-			/* and so when we call minimax we get the score of the opponent. */
-			do_move(&copy, moves[index]);
-
-			/* minimax is called recursively. this call returns the score of */
-			/* the opponent, so we must negate it to get our score.          */
-			score = -minimax(&copy, depth - 1).score;
-
-			/* update the best move if we found a better one.                */
-			if (score > result.score) {
-				result.move = moves[index];
-				result.score = score;
-			}
+	for (Move& move : moves)
+	{
+		std::cout << "From: " << move.from_square << " To: " << move.to_square << std::endl;
+		Position copy = pos;
+		/* do a move, the current player in `copy` is then the opponent, */
+		/* and so when we call minimax we get the score of the opponent. */
+		do_move(&copy, move);
+		/* minimax is called recursively. this call returns the score of */
+		/* the opponent, so we must negate it to get our score.          */
+		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
+		if (score >= beta)
+		{
+			result.move = move;
+			result.score = beta;
+			return result;
+		}
+		/* update the best move if we found a better one.                */
+		if (score > result.score) {
+			result.move = move;
+			result.score = score;
+			alpha = score;
 		}
 	}
-
+	
 	return result;
 }
 
-Move search(const struct search_info *info) {
-	return minimax(info->pos, 4).move;
+Move search(const SearchInfo *info) {
+	return minimax(*info->pos, 4).move;
 }

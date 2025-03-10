@@ -16,16 +16,16 @@ static int add_offset(int square, int file_offset, int rank_offset) {
 
 /* generate a pawn move, taking into account promotions. returns the number  */
 /* of moves generated.                                                       */
-static size_t generate_pawn_move(const Position *pos, Move *moves, int from_square, int to_square) {
+static size_t generate_pawn_move(const Position *pos, std::vector<Move>& moves, int from_square, int to_square) {
 	size_t count = 0;
 
 	if (RANK(to_square) == RELATIVE(RANK_8, pos->side_to_move)) {
-		moves[count++] = make_move(from_square, to_square, KNIGHT);
-		moves[count++] = make_move(from_square, to_square, BISHOP);
-		moves[count++] = make_move(from_square, to_square, ROOK);
-		moves[count++] = make_move(from_square, to_square, QUEEN);
+		moves.push_back(make_move(from_square, to_square, KNIGHT));
+		moves.push_back(make_move(from_square, to_square, BISHOP));
+		moves.push_back(make_move(from_square, to_square, ROOK));
+		moves.push_back(make_move(from_square, to_square, QUEEN));
 	} else {
-		moves[count++] = make_move(from_square, to_square, NO_TYPE);
+		moves.push_back(make_move(from_square, to_square, NO_TYPE));
 	}
 
 	return count;
@@ -35,7 +35,7 @@ static size_t generate_pawn_move(const Position *pos, Move *moves, int from_squa
 /* makes sure that the destination square is on the board, and that it       */
 /* contains an opponent piece or is the en passant square. returns the       */
 /* number of moves generated.                                                */
-static size_t generate_pawn_capture(const Position *pos, Move *moves, int from_square, int file_offset, int rank_offset) {
+static size_t generate_pawn_capture(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
 	int to_square = add_offset(from_square, file_offset, rank_offset);
 
 	if (to_square != NO_SQUARE) {
@@ -53,7 +53,7 @@ static size_t generate_pawn_capture(const Position *pos, Move *moves, int from_s
 /* generate a simple, non-sliding move. this function makes sure that the    */
 /* destination square is on the board, and that it is empty or contains an   */
 /* opponent piece. returns the number of moves generated.                    */
-static size_t generate_simple_move(const Position *pos, Move *moves, int from_square, int file_offset, int rank_offset) {
+static size_t generate_simple_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
 	size_t count = 0;
 	int to_square = add_offset(from_square, file_offset, rank_offset);
 
@@ -61,7 +61,7 @@ static size_t generate_simple_move(const Position *pos, Move *moves, int from_sq
 		int piece = pos->board[to_square];
 
 		if (piece == NO_PIECE || COLOR(piece) != pos->side_to_move) {
-			moves[count++] = make_move(from_square, to_square, NO_TYPE);
+			moves.push_back(make_move(from_square, to_square, NO_TYPE));
 		}
 	}
 
@@ -71,7 +71,7 @@ static size_t generate_simple_move(const Position *pos, Move *moves, int from_sq
 /* generate a sliding move. this function keeps adding the offset in a loop  */
 /* until the destination square runs off the board or into another piece.    */
 /* returns the number of moves generated.                                    */
-static size_t generate_sliding_move(const Position *pos, Move *moves, int from_square, int file_offset, int rank_offset) {
+static size_t generate_sliding_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
 	size_t count = 0;
 	int to_square = add_offset(from_square, file_offset, rank_offset);
 
@@ -79,7 +79,7 @@ static size_t generate_sliding_move(const Position *pos, Move *moves, int from_s
 		int piece = pos->board[to_square];
 
 		if (piece == NO_PIECE || COLOR(piece) != pos->side_to_move) {
-			moves[count++] = make_move(from_square, to_square, NO_TYPE);
+			moves.push_back(make_move(from_square, to_square, NO_TYPE));
 		}
 
 		if (piece != NO_PIECE) {
@@ -115,31 +115,31 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 
 			/* pawn push.                                                    */
 			if (up != NO_SQUARE && pos->board[up] == NO_PIECE) {
-				count += generate_pawn_move(pos, &moves[count], square, up);
+				count += generate_pawn_move(pos, moves, square, up);
 
 				/* double pawn push.                                         */
 				if (up_up != NO_SQUARE && pos->board[up_up] == NO_PIECE) {
 					if (RANK(square) == RELATIVE(RANK_2, COLOR(piece))) {
-						count += generate_pawn_move(pos, &moves[count], square, up_up);
+						count += generate_pawn_move(pos, moves, square, up_up);
 					}
 				}
 			}
 
 			/* pawn captures.                                                */
-			count += generate_pawn_capture(pos, &moves[count], square, -1, forward);
-			count += generate_pawn_capture(pos, &moves[count], square, 1, forward);
+			count += generate_pawn_capture(pos, moves, square, -1, forward);
+			count += generate_pawn_capture(pos, moves, square, 1, forward);
 
 			break;
 		case KNIGHT:
 			/* knight moves.                                                 */
-			count += generate_simple_move(pos, &moves[count], square, -1, -2);
-			count += generate_simple_move(pos, &moves[count], square, 1, -2);
-			count += generate_simple_move(pos, &moves[count], square, -2, -1);
-			count += generate_simple_move(pos, &moves[count], square, 2, -1);
-			count += generate_simple_move(pos, &moves[count], square, -2, 1);
-			count += generate_simple_move(pos, &moves[count], square, 2, 1);
-			count += generate_simple_move(pos, &moves[count], square, -1, 2);
-			count += generate_simple_move(pos, &moves[count], square, 1, 2);
+			count += generate_simple_move(pos, moves, square, -1, -2);
+			count += generate_simple_move(pos, moves, square, 1, -2);
+			count += generate_simple_move(pos, moves, square, -2, -1);
+			count += generate_simple_move(pos, moves, square, 2, -1);
+			count += generate_simple_move(pos, moves, square, -2, 1);
+			count += generate_simple_move(pos, moves, square, 2, 1);
+			count += generate_simple_move(pos, moves, square, -1, 2);
+			count += generate_simple_move(pos, moves, square, 1, 2);
 
 			break;
 		case BISHOP:
@@ -147,31 +147,31 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 		case QUEEN:
 			/* bishop and queen moves.                                       */
 			if (TYPE(piece) != ROOK) {
-				count += generate_sliding_move(pos, &moves[count], square, -1, -1);
-				count += generate_sliding_move(pos, &moves[count], square, 1, -1);
-				count += generate_sliding_move(pos, &moves[count], square, -1, 1);
-				count += generate_sliding_move(pos, &moves[count], square, 1, 1);
+				count += generate_sliding_move(pos, moves, square, -1, -1);
+				count += generate_sliding_move(pos, moves, square, 1, -1);
+				count += generate_sliding_move(pos, moves, square, -1, 1);
+				count += generate_sliding_move(pos, moves, square, 1, 1);
 			}
 
 			/* rook and queen moves.                                         */
 			if (TYPE(piece) != BISHOP) {
-				count += generate_sliding_move(pos, &moves[count], square, 0, -1);
-				count += generate_sliding_move(pos, &moves[count], square, -1, 0);
-				count += generate_sliding_move(pos, &moves[count], square, 1, 0);
-				count += generate_sliding_move(pos, &moves[count], square, 0, 1);
+				count += generate_sliding_move(pos, moves, square, 0, -1);
+				count += generate_sliding_move(pos, moves, square, -1, 0);
+				count += generate_sliding_move(pos, moves, square, 1, 0);
+				count += generate_sliding_move(pos, moves, square, 0, 1);
 			}
 
 			break;
 		case KING:
 			/* simple king moves.                                            */
-			count += generate_simple_move(pos, &moves[count], square, -1, -1);
-			count += generate_simple_move(pos, &moves[count], square, 0, -1);
-			count += generate_simple_move(pos, &moves[count], square, 1, -1);
-			count += generate_simple_move(pos, &moves[count], square, -1, 0);
-			count += generate_simple_move(pos, &moves[count], square, 1, 0);
-			count += generate_simple_move(pos, &moves[count], square, -1, 1);
-			count += generate_simple_move(pos, &moves[count], square, 0, 1);
-			count += generate_simple_move(pos, &moves[count], square, 1, 1);
+			count += generate_simple_move(pos, moves, square, -1, -1);
+			count += generate_simple_move(pos, moves, square, 0, -1);
+			count += generate_simple_move(pos, moves, square, 1, -1);
+			count += generate_simple_move(pos, moves, square, -1, 0);
+			count += generate_simple_move(pos, moves, square, 1, 0);
+			count += generate_simple_move(pos, moves, square, -1, 1);
+			count += generate_simple_move(pos, moves, square, 0, 1);
+			count += generate_simple_move(pos, moves, square, 1, 1);
 
 			/* king side castling.                                           */
 			if (pos->castling_rights[pos->side_to_move] & KING_SIDE) {
@@ -181,7 +181,7 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 				int g1_empty = pos->board[g1] == NO_PIECE;
 
 				if (f1_empty && g1_empty) {
-					moves[count++] = make_move(square, g1, NO_TYPE);
+					moves.push_back(make_move(square, g1, NO_TYPE));
 				}
 			}
 
@@ -195,7 +195,7 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 				int d1_empty = pos->board[d1] == NO_PIECE;
 
 				if (b1_empty && c1_empty && d1_empty) {
-					moves[count++] = make_move(square, c1, NO_TYPE);
+					moves.push_back(make_move(square, c1, NO_TYPE));
 				}
 			}
 
@@ -206,16 +206,26 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 	return count;
 }
 
-size_t generate_legal_moves(const Position *pos, std::vector<Move>& moves) {
-	size_t pseudo_legal_count = generate_pseudo_legal_moves(pos, moves);
-	size_t index;
-	size_t count = 0;
+// size_t generate_legal_moves(const Position *pos, std::vector<Move>& moves) {
+// 	size_t pseudo_legal_count = generate_pseudo_legal_moves(pos, moves);
+// 	size_t index;
+// 	size_t count = 0;
 
-	for (index = 0; index < pseudo_legal_count; index++) {
-		if (is_legal(pos, moves[index])) {
-			moves[count++] = moves[index];
-		}
-	}
+// 	for (index = 0; index < pseudo_legal_count; index++) {
+// 		if (is_legal(pos, moves[index])) {
+// 			moves[count++] = moves[index];
+// 		}
+// 	}
 
-	return count;
+// 	return count;
+// }
+
+size_t    generate_legal_moves(const Position *pos, std::vector<Move>& moves)
+{
+    generate_pseudo_legal_moves(pos, moves);
+    std::erase_if(moves, [pos](const Move& move)
+    {
+        return !is_legal(pos, move);
+    });
+	return 0; //TODO: change later
 }
