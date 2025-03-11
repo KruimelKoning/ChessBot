@@ -27,7 +27,7 @@
 /* https://www.chessprogramming.org/Bitboards                                */
 struct Position {
 	/* pieces indexed by square. `NO_PIECE` is used for empty squares.       */
-	int	board[64];
+	int	board[64] = {-1};
 
 	/* color of the current side to move, must be `WHITE` or `BLACK`.        */
 	int side_to_move;

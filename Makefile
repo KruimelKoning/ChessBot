@@ -6,6 +6,8 @@ NAME	:= chessbot
 CC		:= clang++
 CFLAGS	:= -Wall -Wextra -pedantic -std=c++20 -g
 MAKEFLAGS += --no-print-directory
+VALGRIND_FLAGS := --track-fds=yes --leak-check=full \
+	--show-leak-kinds=all --track-origins=yes
 # CFLAGS := -Wall -Wextra -pedantic -std=c89 -O3 -flto -march=native
 INC_DIRS := include
 MAIN_SRCDIR := src
@@ -16,15 +18,14 @@ MODULES := main evaluate
 SRCDIR := $(addprefix $(MAIN_SRCDIR)/, $(MODULES))
 OBJDIR := $(addprefix $(MAIN_OBJDIR)/, $(MODULES))
 
-SRC_MAIN := $(addprefix main/, generate.cpp main.cpp move.cpp parse.cpp perft.cpp \
-position.cpp search.cpp uci.cpp)
-SRC_EVAL := $(addprefix evaluate/, evaluate.cpp)
+SRC_MAIN := $(shell find $(MAIN_SRCDIR)/main -iname "*.cpp")
+SRC_EVAL := $(shell find $(MAIN_SRCDIR)/evaluate -iname "*.cpp")
 
-SRC := $(addprefix $(MAIN_SRCDIR)/, $(SRC_MAIN) $(SRC_EVAL))
+SRC := $(SRC_MAIN) $(SRC_EVAL)
 OBJ := $(patsubst $(MAIN_SRCDIR)/%.cpp,$(MAIN_OBJDIR)/%.o, $(SRC))
 HEADERS = $(foreach dir, $(INC_DIRS), -I$(dir)) $(addprefix -I,$(SRCDIR))
 
-.PHONY: all clean flcean re
+.PHONY: all clean flcean re run rerun valgrind
 
 all: $(NAME)
 
@@ -50,3 +51,12 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
+
+valgrind: $(NAME)
+	valgrind $(VALGRIND_FLAGS) ./$(NAME)
+
+run: $(NAME)
+	@echo "${GREEN}running ${NAME} ... ${NO_COLOUR}"
+	@./$(NAME)
+
+rerun: fclean run

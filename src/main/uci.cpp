@@ -3,6 +3,7 @@
 #include "move.hpp"
 #include "types.hpp"
 
+#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -138,6 +139,18 @@ static void uci_go(const Position *pos, char *token, char *store) {
 	printf("bestmove %s\n", buffer);
 }
 
+static bool	check_empty(Position *pos)
+{
+	for (size_t i = 0; i < 64; i++)
+	{
+		if (pos->board[i] == 5)
+		{
+			return (true);
+		}
+	}
+	return (false);
+}
+
 void uci_run(const char *name, const char *author) {
 	char *line;
 	int quit = 0;
@@ -150,7 +163,7 @@ void uci_run(const char *name, const char *author) {
 		*token = '\0';
 
 		while ((token = get_token(token, &store))) {
-			if (!strcmp(token, "quit")) {
+			if (!strcmp(token, "exit")) {
 				quit = 1;
 			} else if (!strcmp(token, "uci")) {
 				printf("id name %s\n", name);
@@ -166,7 +179,7 @@ void uci_run(const char *name, const char *author) {
 				break;
 			} else if (!strcmp(token, "register")) {
 				break;
-			} else if (!strcmp(token, "print")) {
+			} else if (!strcmp(token, "print") && check_empty(&pos)) {
 				print_position(&pos, stdout);
 			} else {
 				continue;
