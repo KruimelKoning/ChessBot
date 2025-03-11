@@ -17,3 +17,12 @@ somehow keep track of the time spent searching.
 ## Major League
 For people in the major league, you are allowed to copy only and absolutely only
 the code for handling UCI and FENs. See src/uci.c and src/position.c.
+
+## TODO
+* pruning verbeteren (optioneel)
+* Evaluatie functie researchen
+* King safety
+* Activity (heatmap)
+* Castle rights houden
+* Phases heat maps
+* Grandmaster openings vinden
