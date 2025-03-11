@@ -34,12 +34,12 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
 		// if (depth == 6)
 		// 	std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
-		if (score >= beta)
-		{
-			result.move = move;
-			result.score = score;
-			return result;
-		}
+		// if (score >= beta)
+		// {
+		// 	result.move = move;
+		// 	result.score = score;
+		// 	return result;
+		// }
 		/* update the best move if we found a better one.                */
 		if (score > result.score) {
 			result.move = move;
