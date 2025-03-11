@@ -1,5 +1,9 @@
 #pragma once
 
+#include <iostream>
+
+#include "move.hpp"
+
 /* Universal Chess Interface is a protocol that chess GUIs use to talk to    */
 /* chess engines. this function is called from `main` and handles            */
 /* communication with the GUI. it's all just boring text parsing stuff, so   */
@@ -9,3 +13,5 @@
 /*                                                                           */
 /* https://www.chessprogramming.org/UCI                                      */
 void uci_run(const char *name, const char *author);
+
+std::string move_to_string(Move move);

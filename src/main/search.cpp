@@ -1,6 +1,7 @@
 #include "search.hpp"
 #include "evaluate.hpp"
 #include "generate.hpp"
+#include "uci.hpp"
 
 #include <limits.h>
 #include <iostream>
@@ -12,7 +13,7 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 	if (depth == 0)
 	{
 		/* we have reached our search depth, so evaluate the position.       */
-		result.score = evaluate(&pos);
+		result.score = evaluate(pos);
 		return result;
 	}
 	std::vector<Move>	moves;
@@ -22,7 +23,6 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 
 	for (Move& move : moves)
 	{
-		std::cout << "From: " << move.from_square << " To: " << move.to_square << std::endl;
 		Position copy = pos;
 		/* do a move, the current player in `copy` is then the opponent, */
 		/* and so when we call minimax we get the score of the opponent. */
@@ -30,6 +30,8 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 		/* minimax is called recursively. this call returns the score of */
 		/* the opponent, so we must negate it to get our score.          */
 		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
+		if (depth == 6)
+			std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
 		if (score >= beta)
 		{
 			result.move = move;

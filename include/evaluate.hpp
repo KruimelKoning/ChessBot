@@ -38,4 +38,4 @@
 /* https://www.chessprogramming.org/Evaluation                               */
 /* https://www.chessprogramming.org/Piece-Square_Tables                      */
 /* https://www.chessprogramming.org/Mobility                                 */
-int evaluate(const Position *pos);
+int evaluate(const Position& pos);

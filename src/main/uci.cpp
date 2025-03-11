@@ -3,7 +3,6 @@
 #include "move.hpp"
 #include "types.hpp"
 
-#include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -86,10 +85,24 @@ static void uci_position(Position *pos, char *token, char *store) {
 	}
 }
 
+std::string move_to_string(Move move)
+{
+	std::string buffer(6, '\0');
+
+	buffer[0] = "abcdefgh"[FILE(move.from_square)];
+	buffer[1] = '1' + RANK(move.from_square);
+	buffer[2] = "abcdefgh"[FILE(move.to_square)];
+	buffer[3] = '1' + RANK(move.to_square);
+
+	if (move.promotion_type != NO_TYPE) {
+		buffer[4] = "pnbrqk"[move.promotion_type];
+	}
+	return buffer;
+}
+
 static void uci_go(const Position *pos, char *token, char *store) {
 	SearchInfo info;
 	Move move;
-	char buffer[] = { '\0', '\0', '\0', '\0', '\0', '\0' };
 
 	info.pos = pos;
 	info.time[WHITE] = 0;
@@ -124,19 +137,8 @@ static void uci_go(const Position *pos, char *token, char *store) {
 			break;
 		}
 	}
-
 	move = search(&info);
-
-	buffer[0] = "abcdefgh"[FILE(move.from_square)];
-	buffer[1] = '1' + RANK(move.from_square);
-	buffer[2] = "abcdefgh"[FILE(move.to_square)];
-	buffer[3] = '1' + RANK(move.to_square);
-
-	if (move.promotion_type != NO_TYPE) {
-		buffer[4] = "pnbrqk"[move.promotion_type];
-	}
-
-	printf("bestmove %s\n", buffer);
+	std::cout << "bestmove " << move_to_string(move) << "\n";
 }
 
 static bool	check_empty(Position *pos)
@@ -163,7 +165,7 @@ void uci_run(const char *name, const char *author) {
 		*token = '\0';
 
 		while ((token = get_token(token, &store))) {
-			if (!strcmp(token, "exit")) {
+			if (!strcmp(token, "exit") || !strcmp(token, "quit")) {
 				quit = 1;
 			} else if (!strcmp(token, "uci")) {
 				printf("id name %s\n", name);
