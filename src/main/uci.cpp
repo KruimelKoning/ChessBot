@@ -143,7 +143,7 @@ static bool	check_empty(Position *pos)
 {
 	for (size_t i = 0; i < 64; i++)
 	{
-		if (pos->board[i] == 5)
+		if (pos->board[i] == KING)
 		{
 			return (true);
 		}

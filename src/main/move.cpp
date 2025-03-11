@@ -3,14 +3,15 @@
 #include "parse.hpp"
 #include "types.hpp"
 
-Move make_move(int from_square, int to_square, int promotion_type) {
+void addMove(int from_square, int to_square, int promotion_type, std::vector<Move>& moves)
+{
 	Move move;
 
 	move.from_square = from_square;
 	move.to_square = to_square;
 	move.promotion_type = promotion_type;
 
-	return move;
+	if (is_legal())
 }
 
 int parse_move(Move *move, const char *string) {
