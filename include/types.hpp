@@ -10,6 +10,8 @@
 #define NO_RANK -1
 #define NO_SQUARE -1
 
+#define BOARD_SIZE 64
+
 #define FILE_A 0
 #define FILE_B 1
 #define FILE_C 2
@@ -37,6 +39,7 @@
 #define ROOK 3
 #define QUEEN 4
 #define KING 5
+#define PIECE_COUNT 12
 
 #define KING_SIDE 1
 #define QUEEN_SIDE 2

@@ -1,6 +1,7 @@
+#include "transposition.hpp"
 #include "evaluate.hpp"
-#include "types.hpp"
 #include "heatmap.hpp"
+#include "types.hpp"
 #include "uci.hpp"
 
 #include <iostream>
@@ -28,6 +29,11 @@ int piece_count(const Position& pos)
 
 int evaluate(const Position& pos)
 {
+	uint64_t	hashedPosition = hash(pos);
+	const auto&	value = transpositionTable.find(hashedPosition);
+	if (value != transpositionTable.end())
+		return value->second;
+
 	int		score[2] = { 0, 0 };
 	int		square;
 	bool	isEndGame = piece_count(pos) <= 8;
@@ -48,5 +54,7 @@ int evaluate(const Position& pos)
 	// print_position(&pos, stdout);
 	// std::cout << "Evaluation: " << score[pos.side_to_move] - score[1 - pos.side_to_move] << std::endl;
 
-	return score[pos.side_to_move] - score[1 - pos.side_to_move];
+	int32_t evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
+	transpositionTable.emplace(hashedPosition, evaluation);
+	return evaluation;
 }
