@@ -119,7 +119,7 @@ int is_legal(const Position *pos, Move move)
 {
 	Position copy = *pos;
 	std::vector<Move> moves;
-	moves.reserve(MAX_MOVES);
+	moves.reserve(EXPECTED_MAX_MOVES);
 	int piece = pos->board[move.from_square];
 	size_t count;
 	size_t index;

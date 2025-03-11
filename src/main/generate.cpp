@@ -201,34 +201,18 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 					moves.push_back({ square, c1, NO_TYPE });
 				}
 			}
-
 			break;
 		}
 	}
-
 	return count;
 }
 
-// size_t generate_legal_moves(const Position *pos, std::vector<Move>& moves) {
-// 	size_t pseudo_legal_count = generate_pseudo_legal_moves(pos, moves);
-// 	size_t index;
-// 	size_t count = 0;
-
-// 	for (index = 0; index < pseudo_legal_count; index++) {
-// 		if (is_legal(pos, moves[index])) {
-// 			moves[count++] = moves[index];
-// 		}
-// 	}
-
-// 	return count;
-// }
-
-size_t    generate_legal_moves(const Position *pos, std::vector<Move>& moves)
+size_t	generate_legal_moves(const Position *pos, std::vector<Move>& moves)
 {
-    generate_pseudo_legal_moves(pos, moves);
-    std::erase_if(moves, [pos](const Move& move)
-    {
-        return !is_legal(pos, move);
-    });
+	generate_pseudo_legal_moves(pos, moves);
+	std::erase_if(moves, [pos](const Move& move)
+	{
+		return !is_legal(pos, move);
+	});
 	return 0; //TODO: change later
 }

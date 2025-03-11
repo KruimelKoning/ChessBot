@@ -5,7 +5,8 @@
 #include <limits.h>
 #include <iostream>
 
-SearchResult minimax(const Position& pos, int depth, int alpha, int beta) {
+SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
+{
 	SearchResult result = { .score  = -1000000 };
 
 	if (depth == 0)
@@ -16,7 +17,7 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta) {
 	}
 	std::vector<Move>	moves;
 
-	moves.reserve(MAX_MOVES);
+	moves.reserve(EXPECTED_MAX_MOVES); // MAX_MOVES / 4 should be plenty for most use cases
 	generate_legal_moves(&pos, moves); // should change to void
 
 	for (Move& move : moves)

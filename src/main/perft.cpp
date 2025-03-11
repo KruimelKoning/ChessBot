@@ -26,7 +26,7 @@ static unsigned long perft(const Position *pos, int depth)
 {
 	std::vector<Move> moves;
 
-	moves.reserve(MAX_MOVES);
+	moves.reserve(EXPECTED_MAX_MOVES);
 	size_t count = generate_legal_moves(pos, moves);
 
 	if (depth == 0) {

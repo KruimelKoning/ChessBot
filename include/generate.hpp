@@ -13,6 +13,7 @@
 /* power of two. the `moves` parameter of `generate_psuedo_legal_moves` and  */
 /* `generate_legal_moves` should be an array of size `MAX_MOVES`.            */
 #define MAX_MOVES 256
+#define EXPECTED_MAX_MOVES (MAX_MOVES / 4)
 
 /* generate all pseudo-legal moves and store them in `moves`, which must be  */
 /* large enough to hold all pseudo-legal moves in the position. pseudo-legal */

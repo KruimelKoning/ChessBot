@@ -2,6 +2,9 @@
 
 #include "position.hpp"
 
+#include <vector>
+#include <algorithm>
+
 /* this struct represents a chess move.                                      */
 /*                                                                           */
 /* POSSIBLE IMPROVEMENT: compact encoding                                    */
