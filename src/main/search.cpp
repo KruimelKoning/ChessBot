@@ -15,7 +15,8 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int b
 	{
 		/* we have reached our search depth, so evaluate the position.       */
 		result.score = evaluate(pos);
-		transpositionTable.clear();
+		if (transpositionTable.size() >= 40'000)
+			transpositionTable.clear();
 		// print_position(&pos, stdout);
 		// std::cout << "Evaluation: " << result.score << std::endl;
 		return result;
