@@ -19,13 +19,12 @@ static int add_offset(int square, int file_offset, int rank_offset) {
 static size_t generate_pawn_move(const Position *pos, std::vector<Move>& moves, int from_square, int to_square) {
 	size_t count = 0;
 
-	if (RANK(to_square) == RELATIVE(RANK_8, pos->side_to_move)
-		&& is_legal(pos, { from_square, to_square, ROOK })) {
+	if (RANK(to_square) == RELATIVE(RANK_8, pos->side_to_move)) {
 		moves.push_back({ from_square, to_square, ROOK   });
 		moves.push_back({ from_square, to_square, QUEEN  });
 		moves.push_back({ from_square, to_square, BISHOP });
 		moves.push_back({ from_square, to_square, KNIGHT });
-	} else if (is_legal(pos, { from_square, to_square, NO_TYPE })){
+	} else {
 		moves.push_back({ from_square, to_square, NO_TYPE });
 	}
 
@@ -61,8 +60,7 @@ static size_t generate_simple_move(const Position *pos, std::vector<Move>& moves
 	if (to_square != NO_SQUARE) {
 		int piece = pos->board[to_square];
 
-		if ((piece == NO_PIECE || COLOR(piece) != pos->side_to_move)
-			&& is_legal(pos, { from_square, to_square, NO_TYPE })) {
+		if ((piece == NO_PIECE || COLOR(piece) != pos->side_to_move)) {
 			moves.push_back({ from_square, to_square, NO_TYPE });
 		}
 	}
@@ -80,8 +78,7 @@ static size_t generate_sliding_move(const Position *pos, std::vector<Move>& move
 	while (to_square != NO_SQUARE) {
 		int piece = pos->board[to_square];
 
-		if ((piece == NO_PIECE || COLOR(piece) != pos->side_to_move)
-			&& is_legal(pos, { from_square, to_square, NO_TYPE })) {
+		if ((piece == NO_PIECE || COLOR(piece) != pos->side_to_move)) {
 			moves.push_back({ from_square, to_square, NO_TYPE });
 		}
 
