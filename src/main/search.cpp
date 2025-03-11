@@ -6,9 +6,9 @@
 #include <limits.h>
 #include <iostream>
 
-SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
+SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int beta = 1000000)
 {
-	SearchResult result = { .score  = -1000000 };
+	SearchResult result = { .score  = -1000000000 };
 
 	if (depth == 0)
 	{
@@ -47,10 +47,15 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 			alpha = std::max(alpha, score);
 		}
 	}
-	
+
 	return result;
 }
 
+// Move	minimax(const Position& pos, int depth, int alpha = , int beta)
+// {
+
+// }
+
 Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 4).move;
+	return minimax(*info->pos, 5).move;
 }
