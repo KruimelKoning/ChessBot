@@ -11,7 +11,7 @@ void addMove(int from_square, int to_square, int promotion_type, std::vector<Mov
 	move.to_square = to_square;
 	move.promotion_type = promotion_type;
 
-	if (is_legal())
+	
 }
 
 int parse_move(Move *move, const char *string) {
