@@ -213,3 +213,18 @@ size_t	generate_legal_moves(const Position *pos, std::vector<Move>& moves)
 	});
 	return 0; //TODO: change later
 }
+
+
+// size_t generate_legal_moves(const Position *pos, std::vector<Move>& moves) {
+// 	size_t pseudo_legal_count = generate_pseudo_legal_moves(pos, moves);
+// 	size_t index;
+// 	size_t count = 0;
+
+// 	for (index = 0; index < pseudo_legal_count; index++) {
+// 		if (is_legal(pos, moves[index])) {
+// 			moves[count++] = moves[index];
+// 		}
+// 	}
+
+// 	return count;
+// }

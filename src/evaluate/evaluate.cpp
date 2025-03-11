@@ -1,15 +1,16 @@
 #include "evaluate.hpp"
 #include "types.hpp"
 #include "heatmap.hpp"
+#include "uci.hpp"
+
+#include <iostream>
 
 int index_heatmap(int square, int type, int colour, bool isEndGame)
 {
-	if (colour == BLACK)
+	if (colour == WHITE)
 		flip(square);
 	return ultra_pesto_table[isEndGame][type][square];
 }
-
-static const int piece_value[6] = { 100, 300, 300, 500, 900, 1000000 };
 
 int piece_count(const Position& pos)
 {
@@ -40,9 +41,12 @@ int evaluate(const Position& pos)
 			int type = TYPE(piece);
 			int colour = COLOR(piece);
 
-			score[colour] += (piece_value[type] + index_heatmap(square, type, colour, isEndGame));
+			// std::cout << "Piece: " << type << " pos: " << square << " score: " << piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame) << std::endl;
+			score[colour] += (piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame));
 		}
 	}
+	// print_position(&pos, stdout);
+	// std::cout << "Evaluation: " << score[pos.side_to_move] - score[1 - pos.side_to_move] << std::endl;
 
 	return score[pos.side_to_move] - score[1 - pos.side_to_move];
 }

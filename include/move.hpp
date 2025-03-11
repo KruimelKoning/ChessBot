@@ -32,8 +32,6 @@ struct Move {
 	int promotion_type;
 };
 
-/* create a move from the given parameters.                                  */
-void addMove(int from_square, int to_square, int promotion_type, std::vector<Move>& moves);
 
 /* parse a move and store the result in `move`. valid moves are the from     */
 /* square, followed by the to square, optionally followed by the promotion   */

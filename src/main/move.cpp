@@ -3,17 +3,6 @@
 #include "parse.hpp"
 #include "types.hpp"
 
-void addMove(int from_square, int to_square, int promotion_type, std::vector<Move>& moves)
-{
-	Move move;
-
-	move.from_square = from_square;
-	move.to_square = to_square;
-	move.promotion_type = promotion_type;
-
-	
-}
-
 int parse_move(Move *move, const char *string) {
 	/* parse the from square.                                                */
 	move->from_square = parse_square(string);
@@ -115,15 +104,22 @@ void do_move(Position *pos, Move move) {
 	}
 }
 
-int is_legal(const Position *pos, Move move)
+int	find_king_square(Position& pos, int side_to_move)
 {
-	Position copy = *pos;
-	std::vector<Move> moves;
-	moves.reserve(EXPECTED_MAX_MOVES);
-	int piece = pos->board[move.from_square];
-	size_t count;
-	size_t index;
+	for (int i = 0; i < 64; i++)
+	{
+		if (COLOR(pos.board[i]) == side_to_move && TYPE(pos.board[i]) == KING)
+			return i;
+	}
+	return 0;
+}
 
+int is_legal(const Position *pos, Move move) {
+	Position copy = *pos;
+	std::vector<Move>	moves;
+	int piece = pos->board[move.from_square];
+
+	moves.reserve(EXPECTED_MAX_MOVES);
 	/* make the move on a copy of the position.                              */
 	do_move(&copy, move);
 
@@ -145,13 +141,15 @@ int is_legal(const Position *pos, Move move)
 	}
 
 	/* generate all pseudo-legal moves for the opponent.                     */
-	count = generate_pseudo_legal_moves(&copy, moves);
+	int king_square = find_king_square(copy, pos->side_to_move);
 
-	/* return false if any of those moves could capture the king.            */
-	for (index = 0; index < count; index++) {
-		int piece = copy.board[moves[index].to_square];
+	/* Generate all pseudo-legal moves for the opponent */
+	generate_pseudo_legal_moves(&copy, moves);
 
-		if (piece == PIECE(pos->side_to_move, KING)) {
+	/* Check if any move attacks the king */
+	for (const Move& move : moves) {
+		if (move.to_square == king_square) {
+			/* Move is illegal because the king is in check */
 			return 0;
 		}
 	}
@@ -159,3 +157,4 @@ int is_legal(const Position *pos, Move move)
 	/* return true if no moves could capture the king.                       */
 	return 1;
 }
+

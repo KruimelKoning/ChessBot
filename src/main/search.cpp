@@ -14,6 +14,8 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 	{
 		/* we have reached our search depth, so evaluate the position.       */
 		result.score = evaluate(pos);
+		// print_position(&pos, stdout);
+		// std::cout << "Evaluation: " << result.score << std::endl;
 		return result;
 	}
 	std::vector<Move>	moves;
@@ -30,19 +32,19 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 		/* minimax is called recursively. this call returns the score of */
 		/* the opponent, so we must negate it to get our score.          */
 		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
-		if (depth == 6)
-			std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
+		// if (depth == 6)
+		// 	std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
 		if (score >= beta)
 		{
 			result.move = move;
-			result.score = beta;
+			result.score = score;
 			return result;
 		}
 		/* update the best move if we found a better one.                */
 		if (score > result.score) {
 			result.move = move;
 			result.score = score;
-			alpha = score;
+			alpha = std::max(alpha, score);
 		}
 	}
 	
@@ -50,5 +52,5 @@ SearchResult minimax(const Position& pos, int depth, int alpha, int beta)
 }
 
 Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 6).move;
+	return minimax(*info->pos, 4).move;
 }

@@ -5,6 +5,16 @@ inline void flip (int& pos)
 	pos ^= 0b111000;
 }
 
+
+static constexpr int mg_value[6] = { 82, 337, 365, 477, 1025, 0};
+static constexpr int eg_value[6] = { 94, 281, 297, 512,  936, 0};
+
+static constexpr const int* piece_value[2] =
+{
+	mg_value,
+	eg_value
+};
+
 	static constexpr int mg_pawn_table[64] = {
 		  0,   0,   0,   0,   0,   0,  0,   0,
 		 98, 134,  61,  95,  68, 126, 34, -11,
