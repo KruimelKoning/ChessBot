@@ -3,6 +3,8 @@
 #include "parse.hpp"
 #include "types.hpp"
 
+#include <iostream>
+
 int parse_move(Move *move, const char *string) {
 	/* parse the from square.                                                */
 	move->from_square = parse_square(string);
@@ -102,24 +104,19 @@ void do_move(Position *pos, Move move) {
 
 		break;
 	}
-}
-
-int	find_king_square(Position& pos, int side_to_move)
-{
-	for (int i = 0; i < 64; i++)
-	{
-		if (COLOR(pos.board[i]) == side_to_move && TYPE(pos.board[i]) == KING)
-			return i;
-	}
-	return 0;
+	if (TYPE(pos->board[move.to_square]) == KING)
+		pos->king_pos[pos->side_to_move] = move.to_square;
+	// std::cout << "White king: " << pos->king_pos[WHITE] << " Black king: " << pos->king_pos[BLACK] << std::endl;
+	
 }
 
 int is_legal(const Position *pos, Move move) {
 	Position copy = *pos;
 	std::vector<Move>	moves;
-	int piece = pos->board[move.from_square];
-
 	moves.reserve(EXPECTED_MAX_MOVES);
+
+	int piece = pos->board[move.from_square];
+	int current_king_pos = pos->king_pos[pos->side_to_move];
 	/* make the move on a copy of the position.                              */
 	do_move(&copy, move);
 
@@ -140,16 +137,15 @@ int is_legal(const Position *pos, Move move) {
 		}
 	}
 
-	/* generate all pseudo-legal moves for the opponent.                     */
-	int king_square = find_king_square(copy, pos->side_to_move);
+	int new_king_pos = (TYPE(piece) == KING) ? move.to_square : current_king_pos;
 
 	/* Generate all pseudo-legal moves for the opponent */
 	generate_pseudo_legal_moves(&copy, moves);
 
 	/* Check if any move attacks the king */
-	for (const Move& move : moves) {
-		if (move.to_square == king_square) {
-			/* Move is illegal because the king is in check */
+	for (const Move& opp_move : moves) {
+		if (opp_move.to_square == new_king_pos) {
+			// std::cout << "Check!" << std::endl;
 			return 0;
 		}
 	}

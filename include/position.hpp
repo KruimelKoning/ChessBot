@@ -37,6 +37,8 @@ struct Position {
 
 	/* en passant square, may be `NO_SQUARE`.                                */
 	int en_passant_square;
+
+	int	king_pos[2];
 };
 
 /* print out information about the position. useful for debugging.           */
