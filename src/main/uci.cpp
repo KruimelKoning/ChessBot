@@ -137,7 +137,7 @@ static void uci_go(const Position *pos, char *token, char *store) {
 			break;
 		}
 	}
-	move = search(&info);
+	move = search(info);
 	std::cout << "bestmove " << move_to_string(move) << std::endl;
 }
 

@@ -144,4 +144,4 @@ struct SearchResult {
 /* https://www.chessprogramming.org/Time_Management                          */
 /* https://www.chessprogramming.org/Iterative_Deepening                      */
 /* https://www.chessprogramming.org/Opening_Book                             */
-Move search(const SearchInfo *info);
+Move search(const SearchInfo& info);

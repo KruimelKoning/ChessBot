@@ -15,7 +15,7 @@ int index_heatmap(int square, int type, int colour, bool isEndGame)
 
 int	king_safety(const Position& pos)
 {
-	
+	return 100;
 }
 
 int piece_count(const Position& pos)

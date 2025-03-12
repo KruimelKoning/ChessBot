@@ -1,4 +1,5 @@
 #include "search.hpp"
+#include "tools.hpp"
 #include "heatmap.hpp"
 #include "types.hpp"
 #include "evaluate.hpp"
@@ -21,6 +22,8 @@ bool	compareMoves(const Position& pos, Move move1, Move move2)
 
 	return take1Value > take2Value;
 }
+
+bool	checkMate = false;
 
 SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int beta = 1000000)
 {
@@ -74,11 +77,69 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int b
 	return result;
 }
 
-// Move	minimax(const Position& pos, int depth, int alpha = , int beta)
-// {
+SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int beta = 1'000'000)
+{
+	if (depth == 0)
+	{
+		SearchResult result{};
+		result.score = evaluate(pos);
+		
+		return result;
+	}
+	SearchResult 		bestMove{.score = -100'000'000};
+	std::vector<Move>	moves;
+	std::vector<SearchResult>	searches;
 
-// }
+	moves.reserve(EXPECTED_MAX_MOVES);
+	searches.reserve(EXPECTED_MAX_MOVES);
+	generate_legal_moves(&pos, moves);
 
-Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 6).move;
+	for (Move& move : moves)
+	{
+		Position newPos = pos;
+
+		do_move(&newPos, move);
+		searches.push_back({ move, evaluate(pos) });
+	}
+
+	std::sort(searches.begin(), searches.end(), [](SearchResult& s1, SearchResult& s2)
+	{
+		return s1.score > s2.score;
+	});
+
+	for (SearchResult search : searches)
+	{
+		Position newPos = pos;
+
+		do_move(&newPos, search.move);
+		int	score = -miniMax(newPos, depth - 1, -beta, -alpha).score;
+		if (beta > score)
+		{
+			return { search.move, score };
+		}
+		if (score > bestMove.score)
+		{
+			bestMove = { search.move, score };
+			alpha = std::max(alpha, score);
+		}
+	}
+
+	return bestMove;
+}
+
+Move	search(const SearchInfo& info)
+{
+	SearchResult currentMove;
+	SearchResult bestMove;
+	timesUp(5000);
+	for (int depth = 1; timesUp() == false; depth++)
+	{
+		// std::cout << depth << "\n";
+		currentMove = miniMax(*info.pos, depth);
+		// if (timesUp() == false)
+			bestMove = currentMove;
+		// else if (currentMove.score > bestMove.score)
+		// 	bestMove = currentMove;
+	}
+	return bestMove.move;
 }
