@@ -68,3 +68,5 @@ void do_move(Position *pos, Move move);
 /*                                                                           */
 /* https://www.chessprogramming.org/Legal_Move                               */
 int is_legal(const Position *pos, Move move);
+bool isCheck(const Position& pos, bool changeSide);
+

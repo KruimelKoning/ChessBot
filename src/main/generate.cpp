@@ -16,7 +16,7 @@ static int add_offset(int square, int file_offset, int rank_offset) {
 
 /* generate a pawn move, taking into account promotions. returns the number  */
 /* of moves generated.                                                       */
-static size_t generate_pawn_move(const Position *pos, std::vector<Move>& moves, int from_square, int to_square) {
+size_t generate_pawn_move(const Position *pos, std::vector<Move>& moves, int from_square, int to_square) {
 	size_t count = 0;
 
 	if (RANK(to_square) == RELATIVE(RANK_8, pos->side_to_move)) {
@@ -35,7 +35,7 @@ static size_t generate_pawn_move(const Position *pos, std::vector<Move>& moves, 
 /* makes sure that the destination square is on the board, and that it       */
 /* contains an opponent piece or is the en passant square. returns the       */
 /* number of moves generated.                                                */
-static size_t generate_pawn_capture(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
+size_t generate_pawn_capture(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
 	int to_square = add_offset(from_square, file_offset, rank_offset);
 
 	if (to_square != NO_SQUARE) {
@@ -53,7 +53,7 @@ static size_t generate_pawn_capture(const Position *pos, std::vector<Move>& move
 /* generate a simple, non-sliding move. this function makes sure that the    */
 /* destination square is on the board, and that it is empty or contains an   */
 /* opponent piece. returns the number of moves generated.                    */
-static size_t generate_simple_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
+size_t generate_simple_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
 	size_t count = 0;
 	int to_square = add_offset(from_square, file_offset, rank_offset);
 
@@ -71,7 +71,7 @@ static size_t generate_simple_move(const Position *pos, std::vector<Move>& moves
 /* generate a sliding move. this function keeps adding the offset in a loop  */
 /* until the destination square runs off the board or into another piece.    */
 /* returns the number of moves generated.                                    */
-static size_t generate_sliding_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
+size_t generate_sliding_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset) {
 	size_t count = 0;
 	int to_square = add_offset(from_square, file_offset, rank_offset);
 

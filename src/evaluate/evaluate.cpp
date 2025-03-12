@@ -1,4 +1,5 @@
 #include "transposition.hpp"
+#include "generate.hpp"
 #include "evaluate.hpp"
 #include "heatmap.hpp"
 #include "types.hpp"
@@ -15,7 +16,28 @@ int index_heatmap(int square, int type, int colour, bool isEndGame)
 
 int	king_safety(const Position& pos)
 {
-	
+
+}
+
+void	piece_mobility(const Position& pos, int& evaluation)
+{
+	std::vector<Move>	moves;
+	generate_legal_moves(&pos, moves);
+
+	for (Move& move : moves)
+	{
+		if (TYPE(pos.board[move.from_square]) != PAWN)
+		{
+			evaluation += 10;
+		}
+	}
+	if (moves.size() == 0)
+	{
+		if (isCheck(pos, true))
+			evaluation = -100'000;
+		else
+			evaluation = 0;
+	}
 }
 
 int piece_count(const Position& pos)
@@ -61,7 +83,10 @@ int evaluate(const Position& pos)
 			score[colour] += (piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame));
 		}
 	}
+
+	
 	evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
+	piece_mobility(pos, evaluation);
 	transpositionTable.emplace(hashedPosition, evaluation);
 	return evaluation;
 }
