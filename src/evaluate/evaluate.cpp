@@ -62,6 +62,6 @@ int evaluate(const Position& pos)
 		}
 	}
 	evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
-	transpositionTable.emplace(hashedPosition, evaluation);
+	transpositionTable.emplace_hint(transpositionTable.end() ,hashedPosition, evaluation);
 	return evaluation;
 }
