@@ -60,6 +60,19 @@ void print_position(const Position *pos, FILE *stream) {
 	fprintf(stream, "en passant square: %s\n", en_passant_square_buffer);
 }
 
+#include <iostream>
+
+void	find_king_square(Position& pos)
+{
+	for (int i = 0; i < 64; i++)
+	{
+		if (TYPE(pos.board[i]) == KING)
+		{
+			pos.king_pos[COLOR(pos.board[i])] = i;
+		}
+	}
+}
+
 int parse_position(Position *pos, const char *fen) {
 	int file;
 	int rank;
@@ -183,6 +196,6 @@ int parse_position(Position *pos, const char *fen) {
 	if (*fen) {
 		return FAILURE;
 	}
-
+	find_king_square(*pos);
 	return SUCCESS;
 }

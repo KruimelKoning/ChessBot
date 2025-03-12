@@ -13,6 +13,11 @@ int index_heatmap(int square, int type, int colour, bool isEndGame)
 	return ultra_pesto_table[isEndGame][type][square];
 }
 
+int	king_safety(const Position& pos)
+{
+	
+}
+
 int piece_count(const Position& pos)
 {
 	int count = 0;
@@ -27,18 +32,24 @@ int piece_count(const Position& pos)
 	return count;
 }
 
+bool	is_end_game(const Position& pos)
+{
+	return piece_count(pos) <= 8;
+}
+
 int evaluate(const Position& pos)
 {
 	uint64_t	hashedPosition = hash(pos);
 	const auto&	value = transpositionTable.find(hashedPosition);
+
 	if (value != transpositionTable.end())
 		return value->second;
 
 	int		score[2] = { 0, 0 };
-	int		square;
-	bool	isEndGame = piece_count(pos) <= 8;
+	bool	isEndGame = is_end_game(pos);
+	int32_t	evaluation;
 
-	for (square = 0; square < 64; square++)
+	for (int square = 0; square < 64; square++)
 	{
 		int piece = pos.board[square];
 
@@ -47,14 +58,10 @@ int evaluate(const Position& pos)
 			int type = TYPE(piece);
 			int colour = COLOR(piece);
 
-			// std::cout << "Piece: " << type << " pos: " << square << " score: " << piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame) << std::endl;
 			score[colour] += (piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame));
 		}
 	}
-	// print_position(&pos, stdout);
-	// std::cout << "Evaluation: " << score[pos.side_to_move] - score[1 - pos.side_to_move] << std::endl;
-
-	int32_t evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
+	evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
 	transpositionTable.emplace(hashedPosition, evaluation);
 	return evaluation;
 }

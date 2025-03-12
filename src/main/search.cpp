@@ -1,4 +1,6 @@
 #include "search.hpp"
+#include "heatmap.hpp"
+#include "types.hpp"
 #include "evaluate.hpp"
 #include "generate.hpp"
 #include "transposition.hpp"
@@ -6,6 +8,19 @@
 
 #include <limits.h>
 #include <iostream>
+
+bool	compareMoves(const Position& pos, Move move1, Move move2)
+{
+	bool	isEndGame = is_end_game(pos);
+
+	int take1Value  = pos.board[move1.to_square] == NO_PIECE ? 0 : piece_value[isEndGame][TYPE(pos.board[move1.to_square])];
+	// int piece1Value = piece_value[isEndGame][TYPE(pos.board[move1.from_square])];
+
+	int take2Value  = pos.board[move2.to_square] == NO_PIECE ? 0 : piece_value[isEndGame][TYPE(pos.board[move2.to_square])];
+	// int piece2Value = piece_value[isEndGame][TYPE(pos.board[move2.from_square])];
+
+	return take1Value > take2Value;
+}
 
 SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int beta = 1000000)
 {
@@ -25,6 +40,11 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int b
 
 	moves.reserve(EXPECTED_MAX_MOVES); // MAX_MOVES / 4 should be plenty for most use cases
 	generate_legal_moves(&pos, moves); // should change to void
+
+	std::sort(moves.begin(), moves.end(), [pos](Move move1, Move move2)
+	{
+		return compareMoves(pos, move1, move2);
+	});
 
 	for (Move& move : moves)
 	{
@@ -60,5 +80,5 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int b
 // }
 
 Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 5).move;
+	return minimax(*info->pos, 6).move;
 }
