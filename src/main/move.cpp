@@ -72,6 +72,7 @@ void do_move(Position *pos, Move move) {
 		pos->castling_rights[1 - color] &= ~QUEEN_SIDE;
 	}
 
+	
 	/* update side to move.                                                  */
 	pos->side_to_move = 1 - color;
 
@@ -104,10 +105,9 @@ void do_move(Position *pos, Move move) {
 
 		break;
 	}
+
 	if (TYPE(pos->board[move.to_square]) == KING)
-		pos->king_pos[pos->side_to_move] = move.to_square;
-	// std::cout << "White king: " << pos->king_pos[WHITE] << " Black king: " << pos->king_pos[BLACK] << std::endl;
-	
+		pos->king_pos[color] = move.to_square;
 }
 
 int is_legal(const Position *pos, Move move) {

@@ -71,7 +71,6 @@ void	find_king_square(Position& pos)
 			pos.king_pos[COLOR(pos.board[i])] = i;
 		}
 	}
-	std::cout << "White king: " << pos.king_pos[WHITE] << " Black king: " << pos.king_pos[BLACK] << std::endl;
 }
 
 int parse_position(Position *pos, const char *fen) {
