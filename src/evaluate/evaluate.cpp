@@ -36,11 +36,13 @@ int evaluate(const Position& pos)
 {
 	uint64_t	hashedPosition = hash(pos);
 	const auto&	value = transpositionTable.find(hashedPosition);
+
 	if (value != transpositionTable.end())
 		return value->second;
 
 	int		score[2] = { 0, 0 };
 	bool	isEndGame = is_end_game(pos);
+	int32_t	evaluation;
 
 	for (int square = 0; square < 64; square++)
 	{
@@ -51,14 +53,10 @@ int evaluate(const Position& pos)
 			int type = TYPE(piece);
 			int colour = COLOR(piece);
 
-			// std::cout << "Piece: " << type << " pos: " << square << " score: " << piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame) << std::endl;
 			score[colour] += (piece_value[isEndGame][type] + index_heatmap(square, type, colour, isEndGame));
 		}
 	}
-	// print_position(&pos, stdout);
-	// std::cout << "Evaluation: " << score[pos.side_to_move] - score[1 - pos.side_to_move] << std::endl;
-
-	int32_t evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
+	evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
 	transpositionTable.emplace(hashedPosition, evaluation);
 	return evaluation;
 }
