@@ -27,6 +27,11 @@ int piece_count(const Position& pos)
 	return count;
 }
 
+bool	is_end_game(const Position& pos)
+{
+	return piece_count(pos) <= 8;
+}
+
 int evaluate(const Position& pos)
 {
 	uint64_t	hashedPosition = hash(pos);
@@ -35,10 +40,9 @@ int evaluate(const Position& pos)
 		return value->second;
 
 	int		score[2] = { 0, 0 };
-	int		square;
-	bool	isEndGame = piece_count(pos) <= 8;
+	bool	isEndGame = is_end_game(pos);
 
-	for (square = 0; square < 64; square++)
+	for (int square = 0; square < 64; square++)
 	{
 		int piece = pos.board[square];
 
