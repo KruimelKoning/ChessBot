@@ -23,8 +23,6 @@ bool	compareMoves(const Position& pos, Move move1, Move move2)
 	return take1Value > take2Value;
 }
 
-bool	checkMate = false;
-
 SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int beta = 1000000)
 {
 	SearchResult result = { .score  = -1000000000 };
@@ -86,8 +84,8 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 		
 		return result;
 	}
-	SearchResult 		bestMove{.score = -100'000'000};
-	std::vector<Move>	moves;
+	SearchResult 				bestMove{.score = -100'000'000};
+	std::vector<Move>			moves;
 	std::vector<SearchResult>	searches;
 
 	moves.reserve(EXPECTED_MAX_MOVES);
@@ -98,6 +96,10 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 	{
 		Position newPos = pos;
 
+		if (timesUp() == true)
+		{
+			return bestMove;
+		}
 		do_move(&newPos, move);
 		searches.push_back({ move, evaluate(pos) });
 	}
@@ -111,9 +113,13 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 	{
 		Position newPos = pos;
 
+		if (timesUp() == true)
+		{
+			return bestMove;
+		}
 		do_move(&newPos, search.move);
 		int	score = -miniMax(newPos, depth - 1, -beta, -alpha).score;
-		if (beta > score)
+		if (score >= beta)
 		{
 			return { search.move, score };
 		}
@@ -122,6 +128,22 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 			bestMove = { search.move, score };
 			alpha = std::max(alpha, score);
 		}
+
+		// int score = -minimax(copy, depth - 1, -beta, -alpha).score;
+		// // if (depth == 6)
+		// // 	std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
+		// if (score >= beta)
+		// {
+		// 	result.move = move;
+		// 	result.score = score;
+		// 	return result;
+		// }
+		// /* update the best move if we found a better one.                */
+		// if (score > result.score) {
+		// 	result.move = move;
+		// 	result.score = score;
+		// 	alpha = std::max(alpha, score);
+		// }
 	}
 
 	return bestMove;
@@ -136,10 +158,10 @@ Move	search(const SearchInfo& info)
 	{
 		// std::cout << depth << "\n";
 		currentMove = miniMax(*info.pos, depth);
-		// if (timesUp() == false)
+		if (timesUp() == false)
 			bestMove = currentMove;
-		// else if (currentMove.score > bestMove.score)
-		// 	bestMove = currentMove;
+		else if (currentMove.score > bestMove.score)
+			bestMove = currentMove;
 	}
 	return bestMove.move;
 }
