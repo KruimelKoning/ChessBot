@@ -22,11 +22,11 @@ bool	compareMoves(const Position& pos, Move move1, Move move2)
 	return take1Value > take2Value;
 }
 
-SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int beta = 1000000)
+SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int beta = 1'000'000)
 {
-	SearchResult result = { .score  = -1000000000 };
+	SearchResult result = { .score  = -1'000'000'000 };
 
-	if (depth == 0)
+	if (depth == 0) // check for mate
 	{
 		/* we have reached our search depth, so evaluate the position.       */
 		result.score = evaluate(pos);
