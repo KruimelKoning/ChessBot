@@ -1,6 +1,7 @@
 #pragma once
 
 #include "position.hpp"
+#include "move.hpp"
 
 #include <bit>
 #include <random>
@@ -14,13 +15,14 @@ enum struct Flag : int
 	UPPER
 };
 
-struct Evaluation
+struct	Evaluation
 {
-	Flag	flag;
-	int		value;
+	int		depth;
+	int		score;
+	Move	bestMove;
 };
 
-static std::unordered_map<uint64_t, int32_t>	transpositionTable;
+static std::unordered_map<uint64_t, Evaluation>	transpositionTable;
 
 void		initRandTable();
 uint64_t	hash(const Position& pos);

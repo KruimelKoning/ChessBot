@@ -78,12 +78,13 @@ std::unordered_map<uint64_t, int>	visited;
 SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int beta = 1'000'000)
 {
 	uint64_t		hashedPosition = hash(pos);
-	const auto&		value = visited.find(hashedPosition);
-	SearchResult	bestMove{.score = -100'000'000};
+	const auto&		value = transpositionTable.find(hashedPosition);
+	SearchResult	bestMove{ .score = -100'000'000 };
 
-	if (value != visited.end())
-		return bestMove;
-	visited.emplace(hashedPosition, 0);
+	if (value != transpositionTable.end())
+	{
+		return { value->second.bestMove, value->second.score };
+	}
 
 	if (depth == 0)
 	{
@@ -94,13 +95,19 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 		return result;
 	}
 	std::vector<Move>			moves;
-	std::vector<SearchResult>	searches;
 
 	moves.reserve(EXPECTED_MAX_MOVES);
-	searches.reserve(EXPECTED_MAX_MOVES);
 	generate_legal_moves(&pos, moves);
 
-	for (Move& move : moves)
+	if (moves.size() == 0)
+		return {Move{}, -1'000'000 + depth};
+
+	std::sort(moves.begin(), moves.end(), [pos](Move move1, Move move2)
+	{
+		return compareMoves(pos, move1, move2);
+	});
+
+	for (const Move& move : moves)
 	{
 		Position newPos = pos;
 
@@ -109,65 +116,49 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 			return bestMove;
 		}
 		do_move(&newPos, move);
-		searches.push_back({ move, evaluate(newPos) });
-	}
-
-	std::sort(searches.begin(), searches.end(), [](SearchResult& s1, SearchResult& s2)
-	{
-		return s1.score > s2.score;
-	});
-
-	for (SearchResult search : searches)
-	{
-		Position newPos = pos;
-
-		if (timesUp() == true)
-		{
-			return bestMove;
-		}
-		do_move(&newPos, search.move);
 		int score = -miniMax(newPos, depth - 1, -beta, -alpha).score;
 		if (score >= beta)
 		{
-			return { search.move, score };
+			transpositionTable[hashedPosition] = { depth, score, move };
+			return { move, score };
 		}
 		if (score > bestMove.score)
 		{
-			bestMove = { search.move, score };
+			bestMove = { move, score };
 			alpha = std::max(alpha, score);
 		}
 	}
-
+	transpositionTable[hashedPosition] = { depth, bestMove.score, bestMove.move };
 	return bestMove;
 }
 
 Move	search(const SearchInfo& info)
 {
-	static int firstVisit;
+	// static int firstVisit;
 
-	// will shit the bed when using a fen string
-	if (firstVisit == 0)
-	{
-		firstVisit = 1;
-		if (info.pos->side_to_move == WHITE)
-			return { 12, 28, NO_PIECE };
-		return { 52, 36, NO_PIECE};
-	}
+	// // will shit the bed when using a fen string
+	// if (firstVisit == 0)
+	// {
+	// 	firstVisit = 1;
+	// 	if (info.pos->side_to_move == WHITE)
+	// 		return { 12, 28, NO_PIECE };
+	// 	return { 52, 36, NO_PIECE};
+	// }
 
 	SearchResult	currentMove;
 	SearchResult	bestMove;
 
-	timesUp(info.time[info.pos->side_to_move] / 32);
+	std::cout << "hallo??\n";
+	// timesUp(info.time[info.pos->side_to_move] / 32);
+	timesUp(10000);
 	for (int depth = 1; timesUp() == false; depth++)
 	{
-		// std::cout << depth << "\n";
-		visited.clear();
+		// std::cout << depth << std::endl;
+		// visited.clear();
 		currentMove = miniMax(*info.pos, depth);
 		if (timesUp() == false)
 			bestMove = currentMove;
-		else if (currentMove.score > bestMove.score)
-			bestMove = currentMove;
+		// std::cout << "bestmove: " << bestMove.score << std::endl;
 	}
-	transpositionTable.clear();
 	return bestMove.move;
 }
