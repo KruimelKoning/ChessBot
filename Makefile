@@ -4,7 +4,7 @@ NO_COLOUR =\033[0m
 
 NAME	:= chessbot
 CC		:= clang++
-CFLAGS	:= -Wall -Wextra -pedantic -std=c++20 -g
+CFLAGS	:= -Wall -Wextra -pedantic -std=c++20 -Ofast -fno-exceptions -fno-rtti
 MAKEFLAGS += --no-print-directory
 VALGRIND_FLAGS := --track-fds=yes --leak-check=full \
 	--show-leak-kinds=all --track-origins=yes

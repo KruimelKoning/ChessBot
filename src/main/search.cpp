@@ -112,10 +112,10 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 		searches.push_back({ move, evaluate(newPos) });
 	}
 
-	// std::sort(searches.begin(), searches.end(), [](SearchResult& s1, SearchResult& s2)
-	// {
-	// 	return s1.score > s2.score;
-	// });
+	std::sort(searches.begin(), searches.end(), [](SearchResult& s1, SearchResult& s2)
+	{
+		return s1.score > s2.score;
+	});
 
 	for (SearchResult search : searches)
 	{
@@ -143,10 +143,22 @@ SearchResult	miniMax(const Position& pos, int depth, int alpha = -1'000'000, int
 
 Move	search(const SearchInfo& info)
 {
-	SearchResult currentMove;
-	SearchResult bestMove;
-	timesUp(500000);
-	for (int depth = 1; depth <= 6; depth++)
+	static int firstVisit;
+
+	// will shit the bed when using a fen string
+	if (firstVisit == 0)
+	{
+		firstVisit = 1;
+		if (info.pos->side_to_move == WHITE)
+			return { 12, 28, NO_PIECE };
+		return { 52, 36, NO_PIECE};
+	}
+
+	SearchResult	currentMove;
+	SearchResult	bestMove;
+
+	timesUp(info.time[info.pos->side_to_move] / 32);
+	for (int depth = 1; timesUp() == false; depth++)
 	{
 		// std::cout << depth << "\n";
 		visited.clear();

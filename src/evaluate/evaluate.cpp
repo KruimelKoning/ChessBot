@@ -13,11 +13,6 @@ int index_heatmap(int square, int type, int colour, bool isEndGame)
 	return ultra_pesto_table[isEndGame][type][square];
 }
 
-int	king_safety(const Position& pos)
-{
-	return 100;
-}
-
 int piece_count(const Position& pos)
 {
 	int count = 0;

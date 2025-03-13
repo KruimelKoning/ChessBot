@@ -167,6 +167,7 @@ static constexpr const int* eg_pesto_table[6] =
 	eg_king_table
 };
 
+// I love C++ :))
 static constexpr const int* const* const ultra_pesto_table[2] = 
 {
 	mg_pesto_table,
