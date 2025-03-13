@@ -204,6 +204,74 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 	return count;
 }
 
+bool isCheck(const Position& pos)
+{
+	Position	copy = pos;
+
+	std::vector<Move>	moves;
+	int fromSquare = copy.king_pos[copy.side_to_move];
+	generate_pawn_capture(&copy, moves, fromSquare, -1, copy.side_to_move == WHITE ? 1 : -1);
+	generate_pawn_capture(&copy, moves, fromSquare, 1, copy.side_to_move == WHITE ? 1 : -1);
+	for (const Move& move : moves)
+	{
+		if (COLOR(copy.board[move.to_square]) == 1 - copy.side_to_move &&  TYPE(copy.board[move.to_square]) == PAWN)
+			return true;
+	}
+	moves.clear();
+	generate_simple_move(&copy, moves, fromSquare, -1, -1);
+	generate_simple_move(&copy, moves, fromSquare, 0, -1);
+	generate_simple_move(&copy, moves, fromSquare, 1, -1);
+	generate_simple_move(&copy, moves, fromSquare, -1, 0);
+	generate_simple_move(&copy, moves, fromSquare, 1, 0);
+	generate_simple_move(&copy, moves, fromSquare, -1, 1);
+	generate_simple_move(&copy, moves, fromSquare, 0, 1);
+	generate_simple_move(&copy, moves, fromSquare, 1, 1);
+	for (const Move& move : moves)
+	{
+		if (COLOR(copy.board[move.to_square]) == 1 - copy.side_to_move &&  TYPE(copy.board[move.to_square]) == KING)
+			return true;
+	}
+	moves.clear();
+	generate_simple_move(&copy, moves, fromSquare, -1, -2);
+	generate_simple_move(&copy, moves, fromSquare, 1, -2);
+	generate_simple_move(&copy, moves, fromSquare, -2, -1);
+	generate_simple_move(&copy, moves, fromSquare, 2, -1);
+	generate_simple_move(&copy, moves, fromSquare, -2, 1);
+	generate_simple_move(&copy, moves, fromSquare, 2, 1);
+	generate_simple_move(&copy, moves, fromSquare, -1, 2);
+	generate_simple_move(&copy, moves, fromSquare, 1, 2);
+	for (const Move& move : moves)
+	{
+		if (COLOR(copy.board[move.to_square]) == 1 - copy.side_to_move &&  TYPE(copy.board[move.to_square]) == KNIGHT)
+			return true;
+	}
+	moves.clear();
+	generate_sliding_move(&copy, moves, fromSquare, -1, -1);
+	generate_sliding_move(&copy, moves, fromSquare, 1, -1);
+	generate_sliding_move(&copy, moves, fromSquare, -1, 1);
+	generate_sliding_move(&copy, moves, fromSquare, 1, 1);
+	for (const Move& move : moves)
+	{
+		if (COLOR(copy.board[move.to_square]) == 1 - copy.side_to_move &&
+			(TYPE(copy.board[move.to_square]) == BISHOP || TYPE(copy.board[move.to_square]) == QUEEN))
+			return true;
+	}
+	moves.clear();
+	generate_sliding_move(&copy, moves, fromSquare, 0, -1);
+	generate_sliding_move(&copy, moves, fromSquare, -1, 0);
+	generate_sliding_move(&copy, moves, fromSquare, 1, 0);
+	generate_sliding_move(&copy, moves, fromSquare, 0, 1);
+	for (const Move& move : moves)
+	{
+		if (COLOR(copy.board[move.to_square]) == 1 - copy.side_to_move &&
+			(TYPE(copy.board[move.to_square]) == ROOK || TYPE(copy.board[move.to_square]) == QUEEN))
+			return true;
+	}
+	moves.clear();
+	return false;
+}
+
+
 size_t	generate_legal_moves(const Position *pos, std::vector<Move>& moves)
 {
 	generate_pseudo_legal_moves(pos, moves);

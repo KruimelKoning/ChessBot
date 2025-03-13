@@ -44,3 +44,5 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 /* https://www.chessprogramming.org/Check                                    */
 /* https://www.chessprogramming.org/Double_Check                             */
 size_t generate_legal_moves(const Position *pos, std::vector<Move>& moves);
+
+bool isCheck(const Position& pos);

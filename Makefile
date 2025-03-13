@@ -3,12 +3,12 @@ RED = \033[0;31m
 NO_COLOUR =\033[0m
 
 NAME	:= chessbot
-CC		:= clang++
+CC		:= g++
 CFLAGS	:= -Wall -Wextra -pedantic -std=c++20 -Ofast -march=native -mtune=native -fno-rtti
 MAKEFLAGS += --no-print-directory
 VALGRIND_FLAGS := --track-fds=yes --leak-check=full \
 	--show-leak-kinds=all --track-origins=yes
-# CFLAGS := -Wall -Wextra -pedantic -std=c89 -O3 -flto -march=native
+# CFLAGS := -Wall -Wextra -pedantic -std=c++20 -g
 INC_DIRS := include
 MAIN_SRCDIR := src
 MAIN_OBJDIR := build

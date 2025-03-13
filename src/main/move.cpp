@@ -110,6 +110,8 @@ void do_move(Position *pos, Move move) {
 		pos->king_pos[color] = move.to_square;
 }
 
+
+
 int is_legal(const Position *pos, Move move) {
 	Position copy = *pos;
 	std::vector<Move>	moves;
