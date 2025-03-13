@@ -21,11 +21,6 @@ void piece_mobility(const Position& pos, int& evaluation, int score[2])
 
 	generate_legal_moves(&pos, moves);
 
-	if (moves.empty()) {
-		evaluation = isCheck(pos, true) ? -100'000 : 0;
-		return;
-	}
-
 	for (const Move& move : moves) {
 		int piece = pos.board[move.from_square];
 		if (TYPE(piece) != PAWN) {

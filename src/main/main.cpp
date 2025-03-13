@@ -12,7 +12,7 @@ int main(void)
 #if PERFT
 	perft_run();
 #else
-	uci_run("example engine", "csteenvo");
+	uci_run("RepetitionV4", "akuijer nleusden lbartels");
 #endif
 
 	return EXIT_SUCCESS;

@@ -45,7 +45,4 @@ size_t generate_pseudo_legal_moves(const Position *pos, std::vector<Move>& moves
 /* https://www.chessprogramming.org/Double_Check                             */
 size_t generate_legal_moves(const Position *pos, std::vector<Move>& moves);
 
-
-size_t generate_sliding_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset);
-size_t generate_simple_move(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset);
-size_t generate_pawn_capture(const Position *pos, std::vector<Move>& moves, int from_square, int file_offset, int rank_offset);
+bool isCheck(const Position& pos);

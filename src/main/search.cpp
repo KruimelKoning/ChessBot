@@ -22,24 +22,37 @@ bool	compareMoves(const Position& pos, Move move1, Move move2)
 	return take1Value > take2Value;
 }
 
-SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int beta = 1000000)
+SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int beta = 1'000'000)
 {
-	SearchResult result = { .score  = -1000000000 };
+	SearchResult result = { .score  = -1'000'000'000 };
 
+	uint64_t	hashedPos = hash(pos); // hashedPos is the hashed position
+	if (repetitionTable[hashedPos] == 2)
+	{
+		SearchResult draw = { .score = 0 };
+		return draw;
+	}
 	if (depth == 0)
 	{
-		/* we have reached our search depth, so evaluate the position.       */
 		result.score = evaluate(pos);
 		if (transpositionTable.size() >= 40'000)
+		{
 			transpositionTable.clear();
-		// print_position(&pos, stdout);
-		// std::cout << "Evaluation: " << result.score << std::endl;
+		}
 		return result;
 	}
 	std::vector<Move>	moves;
 
 	moves.reserve(EXPECTED_MAX_MOVES); // MAX_MOVES / 4 should be plenty for most use cases
 	generate_legal_moves(&pos, moves); // should change to void
+	
+	if (moves.empty())  // No legal moves
+	{
+		// std::cout << "Is check: " << (isCheck(pos) ? "true" : "false") << std::endl;
+		// print_position(&pos, stdout);
+		result.score = isCheck(pos) ? -999'999 - depth : 0;
+		return result;
+	}
 
 	std::sort(moves.begin(), moves.end(), [pos](Move move1, Move move2)
 	{
@@ -49,21 +62,18 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int b
 	for (Move& move : moves)
 	{
 		Position copy = pos;
-		/* do a move, the current player in `copy` is then the opponent, */
-		/* and so when we call minimax we get the score of the opponent. */
+
 		do_move(&copy, move);
-		/* minimax is called recursively. this call returns the score of */
-		/* the opponent, so we must negate it to get our score.          */
+		// bool shouldExtend = (depth == 1 && isCheck(copy));
+		// if (depth == 1)
+		// 	std::cout << "shoudlExtend: " << (shouldExtend ? "true" : "false") << std::endl;
 		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
-		// if (depth == 6)
-		// 	std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
 		if (score >= beta)
 		{
 			result.move = move;
 			result.score = score;
 			return result;
 		}
-		/* update the best move if we found a better one.                */
 		if (score > result.score) {
 			result.move = move;
 			result.score = score;
@@ -79,6 +89,10 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1000000, int b
 
 // }
 
-Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 6).move;
+Move search(const SearchInfo *info)
+{
+	SearchResult	result = minimax(*info->pos, 6);
+	repetitionTable[hash(*info->pos)]++;
+	// visited.clear();
+	return result.move;
 }

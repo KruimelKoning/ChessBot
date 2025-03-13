@@ -111,73 +111,7 @@ void do_move(Position *pos, Move move) {
 		pos->king_pos[color] = move.to_square;
 }
 
-bool isCheck(const Position& pos, bool changeSide)
-{
-	Position	copy = pos;
-	if (changeSide)
-		copy.side_to_move = 1 - copy.side_to_move;
-
-	std::vector<Move>	moves;
-	int fromSquare = copy.king_pos[copy.side_to_move];
-	generate_pawn_capture(&copy, moves, fromSquare, -1, copy.side_to_move == WHITE ? 1 : -1);
-	for (const Move& move : moves)
-	{
-		if (TYPE(copy.board[move.to_square]) == PAWN)
-			return true;
-	}
-	moves.clear();
-	generate_simple_move(&copy, moves, fromSquare, -1, -1);
-	generate_simple_move(&copy, moves, fromSquare, 0, -1);
-	generate_simple_move(&copy, moves, fromSquare, 1, -1);
-	generate_simple_move(&copy, moves, fromSquare, -1, 0);
-	generate_simple_move(&copy, moves, fromSquare, 1, 0);
-	generate_simple_move(&copy, moves, fromSquare, -1, 1);
-	generate_simple_move(&copy, moves, fromSquare, 0, 1);
-	generate_simple_move(&copy, moves, fromSquare, 1, 1);
-	for (const Move& move : moves)
-	{
-		if (TYPE(copy.board[move.to_square]) == KING)
-			return true;
-	}
-	moves.clear();
-	generate_simple_move(&copy, moves, fromSquare, -1, -2);
-	generate_simple_move(&copy, moves, fromSquare, 1, -2);
-	generate_simple_move(&copy, moves, fromSquare, -2, -1);
-	generate_simple_move(&copy, moves, fromSquare, 2, -1);
-	generate_simple_move(&copy, moves, fromSquare, -2, 1);
-	generate_simple_move(&copy, moves, fromSquare, 2, 1);
-	generate_simple_move(&copy, moves, fromSquare, -1, 2);
-	generate_simple_move(&copy, moves, fromSquare, 1, 2);
-	for (const Move& move : moves)
-	{
-		if (TYPE(copy.board[move.to_square]) == KNIGHT)
-			return true;
-	}
-	moves.clear();
-	generate_sliding_move(&copy, moves, fromSquare, -1, -1);
-	generate_sliding_move(&copy, moves, fromSquare, 1, -1);
-	generate_sliding_move(&copy, moves, fromSquare, -1, 1);
-	generate_sliding_move(&copy, moves, fromSquare, 1, 1);
-	for (const Move& move : moves)
-	{
-		if (TYPE(copy.board[move.to_square]) == BISHOP || TYPE(copy.board[move.to_square]) == QUEEN)
-			return true;
-	}
-	moves.clear();
-	generate_sliding_move(&copy, moves, fromSquare, 0, -1);
-	generate_sliding_move(&copy, moves, fromSquare, -1, 0);
-	generate_sliding_move(&copy, moves, fromSquare, 1, 0);
-	generate_sliding_move(&copy, moves, fromSquare, 0, 1);
-	for (const Move& move : moves)
-	{
-		if (TYPE(copy.board[move.to_square]) == ROOK || TYPE(copy.board[move.to_square]) == QUEEN)
-			return true;
-	}
-	moves.clear();
-	return false;
-}
-
-bool    can_castle(Position castle, Move move)
+bool can_castle(Position castle, Move move)
 {
 	int from_file = FILE(move.from_square);
 	int to_file = FILE(move.to_square);
@@ -187,20 +121,20 @@ bool    can_castle(Position castle, Move move)
 	if (from_file == FILE_E && to_file == FILE_G)
 	{
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_E, rank);
-		if (isCheck(castleCheck, false))
+		if (isCheck(castleCheck))
 			return false;
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_F, rank);
 	}
 	else if (from_file == FILE_E && to_file == FILE_C)
 	{
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_E, rank);
-		if (isCheck(castleCheck, false))
+		if (isCheck(castleCheck))
 			return false;
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_D, rank);
 	}
 	else
-		return (false);
-	return (!isCheck(castleCheck, false));
+		return (true);
+	return (!isCheck(castleCheck));
 }
 
 int is_legal(const Position *pos, Move move) {
@@ -216,7 +150,7 @@ int is_legal(const Position *pos, Move move) {
 		if (can_castle(copy, move) == false)
 			return (false);
 	}
-	return !isCheck(copy, false);
+	return !isCheck(copy);
 }
 
 // int is_legal(const Position *pos, Move move) {
