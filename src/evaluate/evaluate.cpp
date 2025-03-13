@@ -14,30 +14,26 @@ int index_heatmap(int square, int type, int colour, bool isEndGame)
 	return ultra_pesto_table[isEndGame][type][square];
 }
 
-int	king_safety(const Position& pos)
+void piece_mobility(const Position& pos, int& evaluation, int score[2])
 {
+	std::vector<Move> moves;
+	moves.reserve(40);  // Reserve space for efficiency
 
-}
-
-void	piece_mobility(const Position& pos, int& evaluation)
-{
-	std::vector<Move>	moves;
 	generate_legal_moves(&pos, moves);
 
-	for (Move& move : moves)
-	{
-		if (TYPE(pos.board[move.from_square]) != PAWN)
-		{
-			evaluation += 10;
+	if (moves.empty()) {
+		evaluation = isCheck(pos, true) ? -100'000 : 0;
+		return;
+	}
+
+	for (const Move& move : moves) {
+		int piece = pos.board[move.from_square];
+		if (TYPE(piece) != PAWN) {
+			score[COLOR(piece)] += 10;
 		}
 	}
-	if (moves.size() == 0)
-	{
-		if (isCheck(pos, true))
-			evaluation = -100'000;
-		else
-			evaluation = 0;
-	}
+
+	evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
 }
 
 int piece_count(const Position& pos)
@@ -63,13 +59,13 @@ int evaluate(const Position& pos)
 {
 	uint64_t	hashedPosition = hash(pos);
 	const auto&	value = transpositionTable.find(hashedPosition);
+	int32_t		evaluation;
 
 	if (value != transpositionTable.end())
 		return value->second;
 
 	int		score[2] = { 0, 0 };
 	bool	isEndGame = is_end_game(pos);
-	int32_t	evaluation;
 
 	for (int square = 0; square < 64; square++)
 	{
@@ -85,8 +81,8 @@ int evaluate(const Position& pos)
 	}
 
 	
+	// piece_mobility(pos, evaluation, score);
 	evaluation = score[pos.side_to_move] - score[1 - pos.side_to_move];
-	piece_mobility(pos, evaluation);
 	transpositionTable.emplace(hashedPosition, evaluation);
 	return evaluation;
 }

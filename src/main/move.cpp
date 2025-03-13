@@ -1,6 +1,7 @@
 #include "move.hpp"
 #include "generate.hpp"
 #include "parse.hpp"
+#include "uci.hpp"
 #include "types.hpp"
 
 #include <iostream>
@@ -159,7 +160,7 @@ bool isCheck(const Position& pos, bool changeSide)
 	generate_sliding_move(&copy, moves, fromSquare, 1, 1);
 	for (const Move& move : moves)
 	{
-		if (TYPE(copy.board[move.to_square]) == ROOK || TYPE(copy.board[move.to_square]) == QUEEN)
+		if (TYPE(copy.board[move.to_square]) == BISHOP || TYPE(copy.board[move.to_square]) == QUEEN)
 			return true;
 	}
 	moves.clear();
@@ -169,7 +170,7 @@ bool isCheck(const Position& pos, bool changeSide)
 	generate_sliding_move(&copy, moves, fromSquare, 0, 1);
 	for (const Move& move : moves)
 	{
-		if (TYPE(copy.board[move.to_square]) == BISHOP || TYPE(copy.board[move.to_square]) == QUEEN)
+		if (TYPE(copy.board[move.to_square]) == ROOK || TYPE(copy.board[move.to_square]) == QUEEN)
 			return true;
 	}
 	moves.clear();
@@ -200,10 +201,6 @@ int is_legal(const Position *pos, Move move) {
 			copy.board[SQUARE(FILE_D, rank)] = piece;
 		}
 	}
-	/* Generate all pseudo-legal moves for the opponent */
-	generate_pseudo_legal_moves(&copy, moves);
-
-	/* Check if any move attacks the king */
 	return !isCheck(copy, false);
 }
 
