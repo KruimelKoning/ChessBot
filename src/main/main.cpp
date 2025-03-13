@@ -9,7 +9,7 @@ int main(void) {
 #if PERFT
 	perft_run();
 #else
-	uci_run("example engine", "csteenvo");
+	uci_run("PruningV2", "lbartels akuijer nleusden");
 #endif
 
 	return EXIT_SUCCESS;
