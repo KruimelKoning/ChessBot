@@ -177,30 +177,72 @@ bool isCheck(const Position& pos, bool changeSide)
 	return false;
 }
 
+bool    castle_checked(Position castle, Move move)
+{
+	int from_file = FILE(move.from_square);
+	int to_file = FILE(move.to_square);
+	int rank = RELATIVE(RANK_1, castle.side_to_move);
+
+	Position castleCheck = castle;
+	if (from_file == FILE_E && to_file == FILE_G)
+	{
+		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_E, rank);
+		if (isCheck(castleCheck, false))
+			return true;
+		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_F, rank);
+	}
+	else if (from_file == FILE_E && to_file == FILE_C)
+	{
+		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_E, rank);
+		if (isCheck(castleCheck, false))
+			return true;
+		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_D, rank);
+	}
+	else
+		return (false);
+	return (!isCheck(castleCheck, false));
+}
+
 int is_legal(const Position *pos, Move move) {
-	Position copy = *pos;
+	Position copy	= *pos;
 	std::vector<Move>	moves;
 	moves.reserve(EXPECTED_MAX_MOVES);
 
 	int piece = pos->board[move.from_square];
 	do_move(&copy, move);
 
-	/* for castling moves, pretend there is another king on all squares      */
-	/* between the from square and the to square. this makes it illegal to   */
-	/* castle through a square that is controlled by the opponent.           */
-	if (TYPE(piece) == KING) {
-		int from_file = FILE(move.from_square);
-		int to_file = FILE(move.to_square);
-		int rank = RELATIVE(RANK_1, pos->side_to_move);
-
-		if (from_file == FILE_E && to_file == FILE_G) {
-			copy.board[SQUARE(FILE_E, rank)] = piece;
-			copy.board[SQUARE(FILE_F, rank)] = piece;
-		} else if (from_file == FILE_E && to_file == FILE_C) {
-			copy.board[SQUARE(FILE_E, rank)] = piece;
-			copy.board[SQUARE(FILE_D, rank)] = piece;
-		}
+	if (TYPE(piece) == KING)
+	{
+		if (castle_checked(copy, move))
+			return (false);
 	}
 	return !isCheck(copy, false);
 }
+
+// int is_legal(const Position *pos, Move move) {
+// 	Position copy = *pos;
+// 	std::vector<Move>	moves;
+// 	moves.reserve(EXPECTED_MAX_MOVES);
+
+// 	int piece = pos->board[move.from_square];
+// 	do_move(&copy, move);
+
+// 	/* for castling moves, pretend there is another king on all squares      */
+// 	/* between the from square and the to square. this makes it illegal to   */
+// 	/* castle through a square that is controlled by the opponent.           */
+// 	if (TYPE(piece) == KING) {
+// 		int from_file = FILE(move.from_square);
+// 		int to_file = FILE(move.to_square);
+// 		int rank = RELATIVE(RANK_1, pos->side_to_move);
+
+// 		if (from_file == FILE_E && to_file == FILE_G) {
+// 			copy.board[SQUARE(FILE_E, rank)] = piece;
+// 			copy.board[SQUARE(FILE_F, rank)] = piece;
+// 		} else if (from_file == FILE_E && to_file == FILE_C) {
+// 			copy.board[SQUARE(FILE_E, rank)] = piece;
+// 			copy.board[SQUARE(FILE_D, rank)] = piece;
+// 		}
+// 	}
+// 	return !isCheck(copy, false);
+// }
 
