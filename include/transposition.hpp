@@ -21,6 +21,7 @@ struct Evaluation
 };
 
 static std::unordered_map<uint64_t, int32_t>	transpositionTable;
+static std::unordered_map<uint64_t, int32_t>	repetitionTable;
 
 void		initRandTable();
 uint64_t	hash(const Position& pos);

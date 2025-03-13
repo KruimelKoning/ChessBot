@@ -22,10 +22,23 @@ bool	compareMoves(const Position& pos, Move move1, Move move2)
 	return take1Value > take2Value;
 }
 
+// std::unordered_map<uint64_t, int>	visited;
+
 SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int beta = 1'000'000)
 {
 	SearchResult result = { .score  = -1'000'000'000 };
 
+	uint64_t	hashedPos = hash(pos); // hashedPos is the hashed position
+	// if (visited[hashedPos] == true)
+	// {
+	// 	return result;
+	// }
+	// visited[hashedPos] = true;
+	if (repetitionTable[hashedPos] == 2)
+	{
+		SearchResult draw = { .score = 0 };
+		return draw;
+	}
 	if (depth == 0) // check for mate
 	{
 		/* we have reached our search depth, so evaluate the position.       */
@@ -79,6 +92,10 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 
 // }
 
-Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 6).move;
+Move search(const SearchInfo *info)
+{
+	SearchResult	result = minimax(*info->pos, 6);
+	repetitionTable[hash(*info->pos)]++;
+	// visited.clear();
+	return result.move;
 }
