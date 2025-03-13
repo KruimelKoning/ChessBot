@@ -177,7 +177,7 @@ bool isCheck(const Position& pos, bool changeSide)
 	return false;
 }
 
-bool    castle_checked(Position castle, Move move)
+bool    can_castle(Position castle, Move move)
 {
 	int from_file = FILE(move.from_square);
 	int to_file = FILE(move.to_square);
@@ -188,14 +188,14 @@ bool    castle_checked(Position castle, Move move)
 	{
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_E, rank);
 		if (isCheck(castleCheck, false))
-			return true;
+			return false;
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_F, rank);
 	}
 	else if (from_file == FILE_E && to_file == FILE_C)
 	{
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_E, rank);
 		if (isCheck(castleCheck, false))
-			return true;
+			return false;
 		castleCheck.king_pos[castleCheck.side_to_move] = SQUARE(FILE_D, rank);
 	}
 	else
@@ -213,7 +213,7 @@ int is_legal(const Position *pos, Move move) {
 
 	if (TYPE(piece) == KING)
 	{
-		if (castle_checked(copy, move))
+		if (can_castle(copy, move) == false)
 			return (false);
 	}
 	return !isCheck(copy, false);
