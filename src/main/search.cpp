@@ -80,5 +80,5 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 // }
 
 Move search(const SearchInfo *info) {
-	return minimax(*info->pos, 6).move;
+	return minimax(*info->pos, 5).move;
 }
