@@ -20,34 +20,10 @@ Pieces piece_count(const Position& pos)
 
 	for (int square = 0; square < 64; square++) 
 	{
-		if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == QUEEN)
+		if (pos.board[square] != NO_PIECE && pos.board[square] != KING)
 		{
-			int color = COLOR(pos.board[square]);
-			pieces.queen[color]++;
+			pieces.piece[COLOR(pos.board[square])][TYPE(pos.board[square])]++;
 			count++;
-		}
-		else if(pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == ROOK)
-		{
-			int color = COLOR(pos.board[square]);
-			pieces.rook[color]++;
-			count++;
-		}
-		else if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == BISHOP)
-		{
-			int color = COLOR(pos.board[square]);
-			pieces.bishop[color]++;
-			count++;
-		}
-		else if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == KNIGHT)
-		{
-			int color = COLOR(pos.board[square]);
-			pieces.knight[color]++;
-			count++;
-		}
-		else if (pos.board[square] != NO_PIECE)
-		{
-			int color = COLOR(pos.board[square]);
-			pieces.pawns[color]++;
 		}
 	}
 	pieces.all = count;
@@ -58,21 +34,21 @@ bool	is_end_game(const Position& pos)
 {
 	Pieces pieceCount = piece_count(pos);
 
-	if (pieceCount.queen[WHITE] == 0 && pieceCount.queen[BLACK] == 0 &&
-		pieceCount.rook[WHITE] == 0 && pieceCount.rook[BLACK] == 0 &&
-		pieceCount.bishop[WHITE] + pieceCount.knight[WHITE] <= 1 &&
-		pieceCount.bishop[BLACK] + pieceCount.knight[BLACK] <= 1)
+	if (pieceCount.piece[WHITE][QUEEN] == 0 && pieceCount.piece[BLACK][QUEEN] == 0 &&
+		pieceCount.piece[WHITE][ROOK] == 0 && pieceCount.piece[BLACK][ROOK] == 0 &&
+		pieceCount.piece[WHITE][BISHOP] + pieceCount.piece[WHITE][KNIGHT] <= 1 &&
+		pieceCount.piece[BLACK][BISHOP] + pieceCount.piece[BLACK][KNIGHT] <= 1)
 	{
 		return true;
 	}
 
-	if (pieceCount.queen[WHITE] + pieceCount.rook[WHITE] == 0 &&
-		pieceCount.queen[BLACK] + pieceCount.rook[BLACK] == 0 &&
-		(pieceCount.pawns[WHITE] > 0 || pieceCount.pawns[BLACK] > 0))
+	if (pieceCount.piece[WHITE][QUEEN] + pieceCount.piece[WHITE][ROOK] == 0 &&
+		pieceCount.piece[BLACK][QUEEN] + pieceCount.piece[BLACK][ROOK] == 0 &&
+		(pieceCount.piece[WHITE][PAWN] > 0 || pieceCount.piece[BLACK][PAWN] > 0))
 	{
 		return true;
 	}
-	if (pieceCount.all <= 4)
+	if (pieceCount.all <= 8)
 		return (true);
 	return false;
 }

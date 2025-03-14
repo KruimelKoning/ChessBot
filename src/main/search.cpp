@@ -50,7 +50,7 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 	{
 		// std::cout << "Is check: " << (isCheck(pos) ? "true" : "false") << std::endl;
 		// print_position(&pos, stdout);
-		result.score = isCheck(pos) ? -999'999 - depth : 0;
+		result.score = isCheck(pos) ? -999'999 + depth : 0;
 		return result;
 	}
 
@@ -95,7 +95,7 @@ Move search(const SearchInfo *info)
 	if (is_end_game(*info->pos))
 	{
 		// std::cout << "Its endgame time...\n";
-		result = minimax(*info->pos, 7);
+		result = minimax(*info->pos, 8);
 	}
 	else
 	{
