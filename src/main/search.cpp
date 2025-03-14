@@ -84,20 +84,14 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 	return result;
 }
 
-// Move	minimax(const Position& pos, int depth, int alpha = , int beta)
-// {
-
-// }
-
 Move search(const SearchInfo *info)
 {
 	static int	move_count;
 	SearchResult	result;
 
-
+	move_count += 3;
 	if (move_count < 2)
 	{
-		std::cout << "movecount = " << move_count << std::endl;
 		result = minimax(*info->pos, 2);
 		move_count++;
 	}
@@ -105,17 +99,14 @@ Move search(const SearchInfo *info)
 	{
 		if (is_end_game(*info->pos))
 		{
-			// std::cout << "Its endgame time...\n";
-			result = minimax(*info->pos, 8);
+			result = minimax(*info->pos, 6);
 		}
 		else
 		{
-			// std::cout << "Its not endgame time\n";
 			result = minimax(*info->pos, 5);
 		}
 	}
 
 	repetitionTable[hash(*info->pos)]++;
-	// visited.clear();
 	return result.move;
 }
