@@ -46,11 +46,11 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 	moves.reserve(EXPECTED_MAX_MOVES); // MAX_MOVES / 4 should be plenty for most use cases
 	generate_legal_moves(&pos, moves); // should change to void
 	
-	if (moves.empty())  // No legal moves
+	if (moves.empty())
 	{
 		// std::cout << "Is check: " << (isCheck(pos) ? "true" : "false") << std::endl;
 		// print_position(&pos, stdout);
-		result.score = isCheck(pos) ? -999'999 + depth : 0;
+		result.score = isCheck(pos) ? -999'000 - depth * 64 : 0;
 		return result;
 	}
 
@@ -64,23 +64,23 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 		Position copy = pos;
 
 		do_move(&copy, move);
-		// bool shouldExtend = (depth == 1 && isCheck(copy));
+		bool shouldExtend = (depth == 1 && isCheck(copy));
 		// if (depth == 1)
 		// 	std::cout << "shoudlExtend: " << (shouldExtend ? "true" : "false") << std::endl;
-		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
+		int score = -minimax(copy, depth - (1 & !shouldExtend), -beta, -alpha).score;
 		if (score >= beta)
 		{
 			result.move = move;
 			result.score = score;
 			return result;
 		}
-		if (score > result.score) {
+		if (score > result.score)
+		{
 			result.move = move;
 			result.score = score;
 			alpha = std::max(alpha, score);
 		}
 	}
-
 	return result;
 }
 
