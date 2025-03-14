@@ -89,7 +89,6 @@ Move search(const SearchInfo *info)
 	static int	move_count;
 	SearchResult	result;
 
-	move_count += 3;
 	if (move_count < 2)
 	{
 		result = minimax(*info->pos, 2);
