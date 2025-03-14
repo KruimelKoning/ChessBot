@@ -79,6 +79,58 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 
 // }
 
-Move search(const SearchInfo *info) {
+bool	mirrorAble(const SearchInfo& info, Move& toMove)
+{
+	std::vector<Move> moves;
+	moves.reserve(EXPECTED_MAX_MOVES);
+
+	generate_legal_moves(info.pos, moves);
+
+	for (Move& move : moves)
+	{
+		Position	copy = *info.pos;
+		int i;
+
+		do_move(&copy, move);
+		print_position(&copy, stdout);
+		for (i = 0; i < 64; i++)
+		{
+			int a = copy.board[i];
+			int b = copy.board[i ^ 56];
+			
+			if (a == NO_PIECE && b == NO_PIECE)
+			{
+				continue;
+			}
+			if (a == NO_PIECE || b == NO_PIECE)
+			{
+				break;
+			}
+			if (TYPE(a) == TYPE(b) && COLOR(a) != COLOR(b))
+						{
+				continue;
+			}
+			break;
+		}
+		if (i == 64)
+		{
+			toMove = move;
+			return true;
+		}
+	}
+	return false;
+}
+
+Move search(const SearchInfo *info)
+{
+	if (info->pos->side_to_move == BLACK)
+	{
+		Move	mirror;
+
+		if (mirrorAble(*info, mirror) == true)
+		{
+			return mirror;
+		}
+	}
 	return minimax(*info->pos, 6).move;
 }
