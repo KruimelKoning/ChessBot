@@ -2,6 +2,14 @@
 
 #include "position.hpp"
 
+struct Pieces {
+	int	rook[2] = {0};
+	int	queen[2] = {0};
+	int	bishop[2] = {0};
+	int	knight[2] = {0};
+	int	pawns[2] = {0};
+	int	all = 0;
+};
 /* the evaluation function tries to determine the value of the current       */
 /* position for the current player. the greater the value, the better the    */
 /* position is for the current player. our basic implementation just sums    */

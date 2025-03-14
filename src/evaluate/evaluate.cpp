@@ -13,23 +13,68 @@ int index_heatmap(int square, int type, int colour, bool isEndGame)
 	return ultra_pesto_table[isEndGame][type][square];
 }
 
-int piece_count(const Position& pos)
+Pieces piece_count(const Position& pos)
 {
 	int count = 0;
+	Pieces pieces;
 
 	for (int square = 0; square < 64; square++) 
 	{
-		if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) != PAWN)
+		if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == QUEEN)
 		{
+			int color = COLOR(pos.board[square]);
+			pieces.queen[color]++;
 			count++;
 		}
+		else if(pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == ROOK)
+		{
+			int color = COLOR(pos.board[square]);
+			pieces.rook[color]++;
+			count++;
+		}
+		else if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == BISHOP)
+		{
+			int color = COLOR(pos.board[square]);
+			pieces.bishop[color]++;
+			count++;
+		}
+		else if (pos.board[square] != NO_PIECE && TYPE(pos.board[square]) == KNIGHT)
+		{
+			int color = COLOR(pos.board[square]);
+			pieces.knight[color]++;
+			count++;
+		}
+		else if (pos.board[square] != NO_PIECE)
+		{
+			int color = COLOR(pos.board[square]);
+			pieces.pawns[color]++;
+		}
 	}
-	return count;
+	pieces.all = count;
+	return pieces;
 }
 
 bool	is_end_game(const Position& pos)
 {
-	return piece_count(pos) <= 8;
+	Pieces pieceCount = piece_count(pos);
+
+	if (pieceCount.queen[WHITE] == 0 && pieceCount.queen[BLACK] == 0 &&
+		pieceCount.rook[WHITE] == 0 && pieceCount.rook[BLACK] == 0 &&
+		pieceCount.bishop[WHITE] + pieceCount.knight[WHITE] <= 1 &&
+		pieceCount.bishop[BLACK] + pieceCount.knight[BLACK] <= 1)
+	{
+		return true;
+	}
+
+	if (pieceCount.queen[WHITE] + pieceCount.rook[WHITE] == 0 &&
+		pieceCount.queen[BLACK] + pieceCount.rook[BLACK] == 0 &&
+		(pieceCount.pawns[WHITE] > 0 || pieceCount.pawns[BLACK] > 0))
+	{
+		return true;
+	}
+	if (pieceCount.all <= 4)
+		return (true);
+	return false;
 }
 
 int evaluate(const Position& pos)

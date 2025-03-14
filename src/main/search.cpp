@@ -91,7 +91,18 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 
 Move search(const SearchInfo *info)
 {
-	SearchResult	result = minimax(*info->pos, 6);
+	SearchResult	result;
+	if (is_end_game(*info->pos))
+	{
+		// std::cout << "Its endgame time...\n";
+		result = minimax(*info->pos, 7);
+	}
+	else
+	{
+		// std::cout << "Its not endgame time\n";
+		result = minimax(*info->pos, 6);
+	}
+
 	repetitionTable[hash(*info->pos)]++;
 	// visited.clear();
 	return result.move;
