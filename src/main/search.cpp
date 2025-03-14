@@ -49,11 +49,7 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 	for (Move& move : moves)
 	{
 		Position copy = pos;
-		/* do a move, the current player in `copy` is then the opponent, */
-		/* and so when we call minimax we get the score of the opponent. */
 		do_move(&copy, move);
-		/* minimax is called recursively. this call returns the score of */
-		/* the opponent, so we must negate it to get our score.          */
 		int score = -minimax(copy, depth - 1, -beta, -alpha).score;
 		// if (depth == 6)
 		// 	std::cout << "Move: " << move_to_string(move) << " Score: " << score << std::endl;
@@ -63,7 +59,6 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 			result.score = score;
 			return result;
 		}
-		/* update the best move if we found a better one.                */
 		if (score > result.score) {
 			result.move = move;
 			result.score = score;
@@ -73,11 +68,6 @@ SearchResult minimax(const Position& pos, int depth, int alpha = -1'000'000, int
 
 	return result;
 }
-
-// Move	minimax(const Position& pos, int depth, int alpha = , int beta)
-// {
-
-// }
 
 Move search(const SearchInfo *info) {
 	return minimax(*info->pos, 5).move;

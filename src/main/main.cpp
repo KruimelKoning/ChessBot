@@ -12,7 +12,7 @@ int main(void)
 #if PERFT
 	perft_run();
 #else
-	uci_run("MoveOrderingV3.1", "lbartels akuijer nleusden");
+	uci_run("Segfault", "lbartels akuijer nleusden");
 #endif
 
 	return EXIT_SUCCESS;
