@@ -92,7 +92,6 @@ bool	mirrorAble(const SearchInfo& info, Move& toMove)
 		int i;
 
 		do_move(&copy, move);
-		print_position(&copy, stdout);
 		for (i = 0; i < 64; i++)
 		{
 			int a = copy.board[i];
@@ -123,14 +122,31 @@ bool	mirrorAble(const SearchInfo& info, Move& toMove)
 
 Move search(const SearchInfo *info)
 {
+	Move	move;
+	bool	setMove = false;
+
 	if (info->pos->side_to_move == BLACK)
 	{
 		Move	mirror;
 
 		if (mirrorAble(*info, mirror) == true)
 		{
-			return mirror;
+			Position	copy = *info->pos;
+
+			do_move(&copy, mirror);
+			if (minimax(copy, 2).score < 150 && repetitionCheck[hash(copy)] < 2)
+			{
+				move = mirror;
+				setMove = true;
+			}
 		}
 	}
-	return minimax(*info->pos, 6).move;
+	if (setMove == false)
+	{
+		move = minimax(*info->pos, 6).move;
+	}
+	Position	copy = *info->pos;
+	do_move(&copy, move);
+	repetitionCheck[hash(copy)]++;
+	return move;
 }
